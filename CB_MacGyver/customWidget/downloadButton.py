@@ -99,7 +99,11 @@ class DownloadButton(IconButton):
     def enterEvent(self, a0: QEvent | None) -> None:
         super().enterEvent(a0)
         effect = QGraphicsDropShadowEffect(self)
-        effect.setBlurRadius(3)
+        #이펙트의 반경이 눈에보이는것보다 조금 더 큰 공간을 차지함
+        #그래서 현재기준으로 반경이 8이넘어가면 1번째 항목의 QLabel위젯은 이펙트발생시에 계속해서 repaint됨
+        #지금과 같은 상황은 아니지만 구글검색시에 QLabel의 paintEvent가 많이 호출되서 문제를 겪고있다는 질문이 다수 존재함.
+        #이는 QLabel의 paint메커니즘 때문이라 QLabel을 사용하는거면 어쩔 수 없다고 함.
+        effect.setBlurRadius(8)
         effect.setColor(QColor(184, 20, 20))
         effect.setOffset(0)
         self.setGraphicsEffect(effect)
