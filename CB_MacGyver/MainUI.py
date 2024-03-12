@@ -119,9 +119,9 @@ class MainWindow(QMainWindow):
         '''언어팩에 따른 UI언어번역
         '''
         tr = QCoreApplication.translate
-        self.exitAction.setText(tr('MainWindow', 'Exit'))
-        self.exitAction.setStatusTip(tr('MainWindow', 'Exit'))
-        self.tasks.setTitle(tr('MainWindow', 'Tasks'))
+        self.exitAction.setText(self.tr('Exit'))
+        self.exitAction.setStatusTip(self.tr('Exit'))
+        self.tasks.setTitle(self.tr('Tasks'))
 
     def download(self):
         self.sig.emit()
@@ -152,7 +152,7 @@ if __name__ == '__main__':
     app_icon.addFile(ic, QSize(256,256))
     app.setWindowIcon(app_icon)
 
-    trPath = paths.BASE_DIR + '/tr/tr_ko.qm'
+    trPath = paths.BASE_DIR + '/qt5_ko_kr.qm'
     trr = Translator(app, trPath)
     main = MainWindow(app)
 

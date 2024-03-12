@@ -113,7 +113,7 @@ class CustomProgressBar(QWidget):
         
         painter.drawText(self.bar_width + 10, bar_y + int(bar_y / 2), text)
         if self.is_postprocessing:
-            painter.drawText(self.bar_width + 10 + 35, bar_y + int(bar_y / 2), '후 처리중...')
+            painter.drawText(self.bar_width + 10 + 35, bar_y + int(bar_y / 2), self.tr('processing...'))
             
         
         self.thread_lock.release()

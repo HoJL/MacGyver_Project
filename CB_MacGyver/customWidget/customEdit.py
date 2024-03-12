@@ -25,8 +25,7 @@ class CustomLineEdit(QLineEdit):
         font.setPixelSize(15)
         self.setFont(font)
         self.setFocusPolicy(Qt.FocusPolicy.ClickFocus)
-        tr = QCoreApplication.translate
-        self.setPlaceholderText(tr('MainWindow', 'URLs'))
+        self.setPlaceholderText(self.tr('Enter URL'))
         #self.setStyleSheet('QLineEdit {padding-left: %dpx;}' )
         self.setStyleSheet("""
             QLineEdit {
@@ -102,7 +101,7 @@ class CustomLineEdit(QLineEdit):
         buttonHeight = (self.height() - frameWidth * 2 * 2 - 4)
         self.button.setFixedHeight(buttonHeight)
         self.button.setIconSize(QSize(buttonHeight, buttonHeight))
-        self.button.setToolTip('붙여넣기')
+        self.button.setToolTip(self.tr('Paste'))
 
     def __pressClick(self):
        self.setText(QApplication.clipboard().text())
