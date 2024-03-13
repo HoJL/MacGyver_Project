@@ -1,22 +1,29 @@
+import logging
 import yt_dlp
 from yt_dlp import YoutubeDL
 from downloader import Downloader
+from type import State
 
 class Download_Youtube(Downloader):
 
     ydl_opts =''
     isStart = False
+    isOnce = False
     class MyLogger(object):
         def __init__(self) -> None:
             pass
         def debug(self, msg):
+            if msg == '[youtube:tab] Playlist recommended: Downloading 0 items':
+                raise ValueError(msg)
+
+        def info(self, msg):
             pass
 
         def warning(self, msg):
             pass
 
         def error(self, msg):
-            print(msg)
+            raise ValueError(msg)
 
     def init_opts(self):
         self.ydl_opts = {
@@ -26,18 +33,19 @@ class Download_Youtube(Downloader):
             'outtmpl': 'downloadY/%(title)s.%(ext)s',
             'quiet': True,
             'verbose': False,
-            'postprocessors':[{
+            'postprocessors':[
+            {
+                'key': 'MetadataParser',
+                'actions':[(yt_dlp.postprocessor.metadataparser.MetadataParserPP.replacer, 'webpage_url', '.*', '')],
+                'when': 'post_process'
+            },
+            {
                 'key': 'FFmpegExtractAudio',
                 'preferredcodec': 'mp3',
                 'preferredquality': '192',
             },
             {
                 'key': 'FFmpegMetadata',
-            },
-            {
-                'key': 'MetadataParser',
-                'actions':[(yt_dlp.postprocessor.metadataparser.MetadataParserPP.replacer, 'webpage_url', '.*', '')],
-                'when': 'pre_process'
             }
             ]
         }
@@ -46,7 +54,6 @@ class Download_Youtube(Downloader):
         self.ydl_opts['logger'] = self.MyLogger()
 
     def _progress_hooks(self, d):
-        
         if d['status'] == 'downloading':
             if self.isStart is False:
                 self.isStart = True
@@ -61,13 +68,33 @@ class Download_Youtube(Downloader):
     def _postprocessor_hooks(self, d):
         if d['status'] == 'started':
             self.dp.progress.IsPostprocessing(True)
+            if d['postprocessor'] == 'EmbedThumbnail':
+                if self.isOnce is False:
+                    self.isOnce = True
+                    dic = d['info_dict']['__files_to_move']
+                    for v in dic.values():
+                        self.dp.thumbnail.setLoading(False)
+                        self.dp.thumbnail.set_thumb_pixmap(v)
+                        break
         elif d['status'] == 'finished':
             self.dp.progress.IsPostprocessing(False)
+            #postprocessor = 'EmbedThumbnail'
+            
 
     def download(self):
         super().download()
         self.init_opts()
         with YoutubeDL(self.ydl_opts) as ydl:
             self.dp.progress.start()
-            ydl.download(self.info.url)
+            try:
+                ydl.download(self.info.url)
+            except Exception as e:
+                self.dp.progress.done()
+                self.info.state = State.Error
+                self.info.error_code = e.__str__()
+                return
             self.dp.progress.done()
+            self.info.state = State.Done
+
+
+        logging.Logger
