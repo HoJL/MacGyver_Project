@@ -76,7 +76,8 @@ class CustomLineEdit(QLineEdit):
         di = DownloadInfo(self.cur_url, self.cur_type)
         if self.cur_type == None:
             di.state = type.State.Error
-
+        
+        self.setText('')
         return di
     
     def __buttonInit(self):
