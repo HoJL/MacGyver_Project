@@ -69,6 +69,7 @@ class CustomProgressBar(QWidget):
     
     def done(self):
         self.timer.stop()
+        
 
     def download_done(self):
         self.cur_value = self.total_value
@@ -89,7 +90,7 @@ class CustomProgressBar(QWidget):
         painter = QPainter(self)
         #painter.setBackground(QColor(255, 0, 0))
         painter.setRenderHint(QPainter.RenderHint.HighQualityAntialiasing)
-        painter.fillRect(0, 0, self.width(), self.height(), QColor(255, 0, 0))
+        painter.fillRect(0, 0, self.width(), self.height(), QColor(255, 255, 255, 0))
         bar_y = max(0, (int)((self.height() - self.bar_height) / 2))
         #background bar
         painter.setPen(Qt.PenStyle.NoPen)

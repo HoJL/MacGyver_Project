@@ -134,7 +134,7 @@ class Download_Panel():
 
         #Time
         self.time_widget = QLabel(self.base)
-        #self.time_widget.setStyleSheet('border: 0; background-color: rgb(255, 255, 0);')
+        self.time_widget.setStyleSheet('border: 0; background-color: rgba(255, 255, 255, 0);')
         self.time_str = '00:00'
         self.time_widget.setText(self.time_str)
         self.time = 0
@@ -215,7 +215,7 @@ class Download_Panel():
             if self.info.type is not None:
                 prefix = self.info.error_code
                 
-            txt = prefix + postfix
+            txt = prefix + ' \n' + postfix
             self.title.setText(txt)
             #self.title.adjustSize()
             # rect = self._top_layout.contentsRect()
