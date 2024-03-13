@@ -26,5 +26,5 @@ class Loading_Label(QLabel):
         self.loading.start()
 
     def stop(self):
-        self.loading.stop()
         self.hide()
+        #self.loading.stop()

@@ -76,10 +76,10 @@ class ThumbnailLabel(QLabel):
         if self.state == type.State.Error:
             return
         if pixUrl is None:
-            self.loading.start()
+            self.setLoading(True)
             return
         
-        self.loading.stop()
+        self.setLoading(False)
         self.thumb_base = QPixmap(pixUrl).scaled(self.thumbsize, aspectRatioMode=Qt.AspectRatioMode.KeepAspectRatio, transformMode=Qt.TransformationMode.SmoothTransformation)
         self.thumb_small = QPixmap(pixUrl).scaled(self.thumbsize.width() - 5, self.thumbsize.height() - 5, aspectRatioMode=Qt.AspectRatioMode.KeepAspectRatio, transformMode=Qt.TransformationMode.SmoothTransformation)
         self.big_pix = QPixmap(pixUrl).scaled(self.overlayX, self.overlayY, aspectRatioMode=Qt.AspectRatioMode.KeepAspectRatioByExpanding, transformMode=Qt.TransformationMode.SmoothTransformation)
@@ -90,11 +90,14 @@ class ThumbnailLabel(QLabel):
         self.splash.setMask(pix.mask())
         self.splash.setFixedSize(self.big_pix.width(), self.big_pix.height())
         
+    def set_thumb_pixmap_from_web(self, url):
+        pass
+
     def setLoading(self, b: bool):
         if b is True:
-            self.loading.show()
+            self.loading.start()
         else:
-            self.loading.hide()
+            self.loading.stop()
 
     def enterEvent(self, a0: QEvent | None) -> None:
         self.isEnter = True
