@@ -109,8 +109,6 @@ class Download_M3u8(Downloader):
         now = datetime.datetime.now()
         date_str = now.strftime('%Y%m%d_%H%M%S')
         tmpdir = paths.BASE_DIR + '/tmp_' + date_str
-        if os.path.isdir(tmpdir) is False:
-            os.mkdir(tmpdir)
         file += date_str + '.mp4'
         self.dp.setTitle(file)
         file_dir = paths.BASE_DIR + '/' + file
@@ -150,6 +148,8 @@ class Download_M3u8(Downloader):
                     return self.info
 
             self.dp.progress.IsPostprocessing(True)
+            if os.path.isdir(tmpdir) is False:
+                os.mkdir(tmpdir)
             for key, url, content in key_url_content_triple:
                 file_name = self._resolve_file_name(url)
                 file_path = os.path.join(tmpdir, file_name)
