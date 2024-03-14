@@ -10,9 +10,10 @@ class MyLabel(QLabel):
         self.cnt = 0
         self.txt = ""
         self.mt = QFontMetrics(self.font())
-        self.txt_flags = Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignVCenter
+        self.txt_flags = Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignVCenter | Qt.TextFlag.TextDontClip
         self.setSizePolicy(QSizePolicy.Policy.Ignored, QSizePolicy.Policy.Expanding)
         self.setContentsMargins(0, 0, 0, 0)
+        #self.setWordWrap(True)
 
     def setText(self, a0: str | None) -> None:
         self.txt = a0
@@ -28,5 +29,5 @@ class MyLabel(QLabel):
         # #rt = QRectF(0, 0, 100, 40)
         # # print(mt.boundingRect())
         elided = self.mt.elidedText(self.txt, Qt.TextElideMode.ElideRight, self.width() - 10)
-        painter.drawText(self.rect(), self.txt_flags, elided)
+        painter.drawText(self.rect(), self.txt_flags, self.txt)
         painter.end()
