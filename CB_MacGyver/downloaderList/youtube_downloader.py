@@ -33,6 +33,7 @@ class Download_Youtube(Downloader):
             'outtmpl': 'downloadY/%(title)s.%(ext)s',
             'quiet': True,
             'verbose': False,
+            'noplaylist': True,
             'postprocessors':[
             {
                 'key': 'MetadataParser',
@@ -57,6 +58,7 @@ class Download_Youtube(Downloader):
         if d['status'] == 'downloading':
             if self.isStart is False:
                 self.isStart = True
+                self.dp.setTitle(d['info_dict']['title'])
                 self.dp.progress.setTotal(d['total_bytes'])
                 self.dp.progress.setValue(0)
 
