@@ -178,7 +178,7 @@ class Download_Panel():
            
     def setTitle(self, title: str):
        self.title.setText(title)
-       pass
+       self.title.update()
     
     def set_infomation(self):
 
@@ -217,14 +217,8 @@ class Download_Panel():
                 
             txt = prefix + ' \n' + postfix
             self.title.setText(txt)
-            #self.title.adjustSize()
-            # rect = self._top_layout.contentsRect()
-            # print(rect)
-            # mt = QFontMetrics(self.title.font())
-            # elided = mt.elidedText(txt, Qt.TextElideMode.ElideRight, self.title.width() - 10)
-            # self.title.setText(elided)
-            # self._top_layout.update()
             self.thumbnail.setLoading(False)
+            self.thumbnail.state = type.State.Error
         else:
             self.type_icon.show()
             self.progress.show()

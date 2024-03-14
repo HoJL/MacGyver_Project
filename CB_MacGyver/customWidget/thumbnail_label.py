@@ -15,7 +15,7 @@ class ThumbnailLabel(QLabel):
 
         self.setAlignment(Qt.AlignmentFlag.AlignCenter)
         self.setStyleSheet("""
-                QFrame{
+                QLabel{
                         background-color: rgba(222, 222, 222, 0);
                         border-width: 0px;
                         border-radius: 10px;
@@ -40,8 +40,9 @@ class ThumbnailLabel(QLabel):
         self.loading.move(int(self.thumbsize.width()/2 - self.loading.width()/2), int(self.thumbsize.height()/2 - self.loading.height()/2))
 
         self.splash = QLabel(self, Qt.WindowType.WindowStaysOnTopHint | Qt.WindowType.SplashScreen)
-        self.splash.setStyleSheet('background-color: rgba(222, 222, 222, 0); border-width: 0px;')
+        #self.splash.setStyleSheet('background-color: rgba(222, 222, 222, 0); border-width: 0px;')
         self.splash.setWindowOpacity(0)
+        self.splash.hide()
         self.zoom_signal.connect(self.zoom_slot)
         self.zoom_move_signal.connect(self.zoom_move_slot)
         QWidget(self.root).setWindowState(Qt.WindowState.WindowActive)
@@ -49,11 +50,7 @@ class ThumbnailLabel(QLabel):
         
     def rounded_image(self): 
   
-        # image = QImage.fromData(imgdata, imgtype) 
-        # image.convertToFormat(QImage.Format.Format_ARGB32) 
-        # image = image.scaled(self.overlayX, self.overlayY, aspectRatioMode=Qt.AspectRatioMode.KeepAspectRatioByExpanding, transformMode=Qt.TransformationMode.SmoothTransformation)
-        image = QPixmap(self.pix).scaled(self.overlayX, self.overlayY, aspectRatioMode=Qt.AspectRatioMode.KeepAspectRatioByExpanding, transformMode=Qt.TransformationMode.SmoothTransformation)
-        
+        image = QPixmap(self.pix).scaled(self.overlayX, self.overlayY, aspectRatioMode=Qt.AspectRatioMode.KeepAspectRatioByExpanding, transformMode=Qt.TransformationMode.SmoothTransformation)        
         out_img = QPixmap(image.width(), image.height())
         out_img.fill(Qt.GlobalColor.transparent)
      
@@ -65,8 +62,6 @@ class ThumbnailLabel(QLabel):
         painter.fillRect(0, 0, image.width(), image.height(), QColor(255, 255, 255, 0))
         painter.drawRoundedRect(0, 0, image.width(), image.height(), 8, 8)
         painter.end()
-        # pix = out_img
-        # pix = pix.scaled(image.width(), image.height(), Qt.AspectRatioMode.KeepAspectRatio, Qt.TransformationMode.SmoothTransformation) 
         return out_img 
 
     def __del__(self):
@@ -89,9 +84,6 @@ class ThumbnailLabel(QLabel):
         self.splash.setPixmap(pix)
         self.splash.setMask(pix.mask())
         self.splash.setFixedSize(self.big_pix.width(), self.big_pix.height())
-        
-    def set_thumb_pixmap_from_web(self, url):
-        pass
 
     def setLoading(self, b: bool):
         if b is True:
@@ -160,8 +152,15 @@ class ThumbnailLabel(QLabel):
         self.splash.move(self.mouseX + 20, self.mouseY + 20)
 
     def zoom_slot(self, opacity):
+        if self.state == type.State.Error:
+            return
+        if self.loading.isVisible() is True:
+            return        
         if self.splash.isVisible() is False:
-            self.splash.show()
-            QWidget(self.root).setWindowState(Qt.WindowState.WindowActive)
+            self.show_splash()
 
         self.splash.setWindowOpacity(opacity)
+
+    def show_splash(self):
+        self.splash.show()
+        QWidget(self.root).setWindowState(Qt.WindowState.WindowActive)
