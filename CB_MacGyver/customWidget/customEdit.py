@@ -3,7 +3,7 @@ from PyQt5.QtWidgets import *
 from PyQt5.QtGui import *
 from PyQt5.QtCore import *
 from PyQt5.QtWidgets import QWidget
-from .rippleEffect import IconButton
+#from .rippleEffect import IconButton
 import customWidget.iconbutton
 import paths
 import type
@@ -84,28 +84,11 @@ class CustomLineEdit(QLineEdit):
     def __buttonInit(self):
         '''버튼 초기화 함수
         '''
-        self.button = customWidget.iconbutton.IconButton(self)
-        
-        # self.button = IconButton(self)
-        # self.button.setIcon(QIcon(self.link_icon))
-        # self.button.setStyleSheet("""
-        #     QToolButton {
-        #         border: 0px;
-        #         padding: 0px;
-        #         border-radius: 3px;
-        #     }
-        #     QToolButton:hover {
-        #         background-color: rgb(210, 210, 210);
-        #     }
-            
-        #     """)
-        self.button.clicked.connect(self.__pressClick)
-        # self.button.setCursor(Qt.CursorShape.PointingHandCursor)
         frameWidth = self.style().pixelMetric(QStyle.PixelMetric.PM_DefaultFrameWidth)
         buttonHeight = (self.height() - frameWidth * 2 * 2 - 4)
-        self.button.setFixedSize(buttonHeight, buttonHeight)
-        self.button.setIconSize(QSize(buttonHeight, buttonHeight))
+        self.button = customWidget.iconbutton.IconButton(self, QSize(buttonHeight, buttonHeight))
         self.button.setToolTip(self.tr('Paste'))
+        self.button.clicked.connect(self.__pressClick)
 
     def __pressClick(self):
        self.setText(QApplication.clipboard().text())

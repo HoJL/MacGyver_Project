@@ -4,9 +4,10 @@ from PyQt5.QtWidgets import *
 from PyQt5.QtGui import *
 from PyQt5.QtCore import *
 from PyQt5.QtWidgets import QWidget
-from .rippleEffect import IconButton
+#from .rippleEffect import IconButton
+import customWidget.iconbutton
 import paths
-class DownloadButton(IconButton):
+class DownloadButton(customWidget.iconbutton.IconButton):
 
     isIn = False
     isInMenu = False
@@ -26,13 +27,12 @@ class DownloadButton(IconButton):
     downArrow_image = paths.IMAGE_DIR + '/down_arrow.png'
     
     def __init__(self, edit, parent = None, ) -> None:
-        super().__init__(parent, 96)
-        menu = QMenu()
-        temp = QAction('arrowasdfasdf', self)
-        menu.addAction(temp)
-        menu.addSeparator()
-        menu.addAction('bbbbbbbbbb')
-        self.setMenu(menu)
+        super().__init__(parent, QSize(self.btnW, self.btnH))
+        # menu = QMenu()
+        # temp = QAction('추가중', self)
+        # menu.addAction(temp)
+        # menu.addSeparator()
+        # self.setMenu(menu)
         #self.setIcon(QIcon('Download_Icon.png'))
         self.setAutoRaise(True)
         self.setFixedHeight(self.btnH)
@@ -42,7 +42,7 @@ class DownloadButton(IconButton):
         self.pixmapArrow = QPixmap(self.downArrow_image)
         self.pixmapDown = self.pixmapDown.scaled(20, 18, Qt.AspectRatioMode.KeepAspectRatio)
         #self.installEventFilter(self)
-        self.setPopupMode(QToolButton.ToolButtonPopupMode.MenuButtonPopup)
+        #self.setPopupMode(QToolButton.ToolButtonPopupMode.MenuButtonPopup)
         self.setCursor(Qt.CursorShape.PointingHandCursor)
         #self.baseColor = "rgb(184, 20, 20)"
         #self.pressedColor = "rgb(160, 20, 20)"
@@ -98,6 +98,7 @@ class DownloadButton(IconButton):
     
     def enterEvent(self, a0: QEvent | None) -> None:
         super().enterEvent(a0)
+        #self.isIn = True
         effect = QGraphicsDropShadowEffect(self)
         #이펙트의 반경이 눈에보이는것보다 조금 더 큰 공간을 차지함
         #그래서 현재기준으로 반경이 8이넘어가면 1번째 항목의 QLabel위젯은 이펙트발생시에 계속해서 repaint됨
@@ -119,36 +120,31 @@ class DownloadButton(IconButton):
     #         else: 
     #             self.isInMenu = False
     #         self.update()
-    #         if self.isIn: return
-    #         effect = QGraphicsDropShadowEffect()
-    #         effect.setBlurRadius(20)
-    #         effect.setColor(QColor(184, 20, 20))
-    #         effect.setOffset(0)
-    #         self.setGraphicsEffect(effect)
-    #         self.isIn = True
 
-    # def mousePressEvent(self, e: QMouseEvent) -> None:
-    #     super().mousePressEvent(e)
-    #     if e.buttons() & Qt.MouseButton.LeftButton:
-    #         self.isPress = True
+    def mousePressEvent(self, e: QMouseEvent) -> None:
+        super().mousePressEvent(e)
+        if e.buttons() & Qt.MouseButton.LeftButton:
+            self.isPress = True
+            if self.isInMenu is True:
+                   self.showMenu()
 
     def mouseReleaseEvent(self, e: QMouseEvent) -> None:
         super().mouseReleaseEvent(e)
         self.isPress = False
         self.update()
 
-    def eventFilter(self, object: QObject | None, event: QEvent | None) -> bool:
-        if event.type() == QEvent.Type.HoverEnter:
-            effect = QGraphicsDropShadowEffect()
-            effect.setBlurRadius(20)
-            effect.setColor(QColor(184, 20, 20))
-            effect.setOffset(0)
-            self.setGraphicsEffect(effect)
-            return True
-        elif event.type() == QEvent.Type.HoverLeave:
-            self.setGraphicsEffect(None)
-            return True
-        return False
+    # def eventFilter(self, object: QObject | None, event: QEvent | None) -> bool:
+    #     if event.type() == QEvent.Type.HoverEnter:
+    #         effect = QGraphicsDropShadowEffect()
+    #         effect.setBlurRadius(20)
+    #         effect.setColor(QColor(184, 20, 20))
+    #         effect.setOffset(0)
+    #         self.setGraphicsEffect(effect)
+    #         return True
+    #     elif event.type() == QEvent.Type.HoverLeave:
+    #         self.setGraphicsEffect(None)
+    #         return True
+    #     return False
     
 
     # def __pressClick(self):
