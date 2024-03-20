@@ -12,7 +12,7 @@ from type import DownloadInfo
 from functools import partial
 from myTimer import MyTimer
 from customWidget.myLabel import MyLabel
-
+from customWidget.panel_buttons import PanelButtons
 class Download_Panel():
     
     _height = 80
@@ -20,6 +20,8 @@ class Download_Panel():
     loading_icon = paths.IMAGE_DIR + '/loading_spin.gif'
     _lock = threading.Lock()
     def __init__(self, parent, info: DownloadInfo) -> None:
+
+        #super().__init__(parent)
         self._layout = QBoxLayout(QBoxLayout.Direction.LeftToRight)
         self._layout.setSpacing(0)
         self._layout.setContentsMargins(0, 0, 0, 0)
@@ -28,7 +30,8 @@ class Download_Panel():
         self.base = QWidget(parent)
         self.base.setLayout(self._layout)
         self.base.setFocusPolicy(Qt.FocusPolicy.NoFocus)
-        
+        self.base.enterEvent = self.enterEvent
+        self.base.leaveEvent = self.leaveEvent
         self.back_color = QColor(255, 255, 255)
         front_color = QColor(100, 100, 200)
         self.error_color = QColor(233, 59, 59)
@@ -102,7 +105,10 @@ class Download_Panel():
         #self.title.setSizePolicy(QSizePolicy.Policy.Ignored, QSizePolicy.Policy.Expanding)
         self.title.setStyleSheet('border: 0; background-color: rgba(255, 0, 255, 0);')
         self._top_layout.addWidget(self.title)
-
+        
+        self.pbt = PanelButtons(self.base)
+        self._top_layout.addWidget(self.pbt)
+        self.pbt.hide()
         # self.testL = QLabel(self.base)
         # self.testL.setText("1")
         # # #self.testL.setFixedWidth(100)
@@ -175,7 +181,13 @@ class Download_Panel():
         self.empty.setStyleSheet('border: 0; background-color: rgba(255, 255, 255, 0);')
         self._bottom_layout.addWidget(self.empty)
         #self.update_state()
-           
+    
+    def enterEvent(self, e: QtCore.QEvent | None) -> None:
+        self.pbt.show()
+
+    def leaveEvent(self, e: QtCore.QEvent | None) -> None:
+        self.pbt.hide()
+
     def setTitle(self, title: str):
        self.title.setText(title)
        self.title.update()
