@@ -13,7 +13,8 @@ class IconButton(QToolButton):
         self.setCursor(Qt.CursorShape.PointingHandCursor)
         #self.test_img = QIcon(paths.IMAGE_DIR + '/Link_Icon.png')
         self.setFixedSize(size)
-        self.pixmap = QPixmap(paths.IMAGE_DIR + '/Link_Icon.png').scaled(size, aspectRatioMode=Qt.AspectRatioMode.KeepAspectRatioByExpanding, transformMode=Qt.TransformationMode.SmoothTransformation)
+        self.icon_size = size - QSize(2, 2)
+        self.pixmap = QPixmap(paths.IMAGE_DIR + '/Link_Icon.png').scaled(self.icon_size, aspectRatioMode=Qt.AspectRatioMode.KeepAspectRatioByExpanding, transformMode=Qt.TransformationMode.SmoothTransformation)
         self.alpha = 0
         self.hover_pixmap = self.pixmap
         self.result_pixmap = self.pixmap
@@ -61,7 +62,7 @@ class IconButton(QToolButton):
 
     @dispatch(str)
     def setPixmap(self, url: str):
-        self.setPixmap(url, QSize(self.width(), self.height()))
+        self.setPixmap(url, QSize(self.icon_size.width(), self.icon_size.height()))
 
     def paintEvent(self, a0: QPaintEvent | None) -> None:
         
