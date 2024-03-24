@@ -52,7 +52,8 @@ class IconButton(QToolButton):
     def setIconSize(self, size: QSize) -> None:
         #super().setIconSize(size)
         self.pixmap = self.pixmap.scaled(size.width(), size.height(), aspectRatioMode=Qt.AspectRatioMode.KeepAspectRatioByExpanding, transformMode=Qt.TransformationMode.SmoothTransformation)
-
+        self.result_pixmap = self.pixmap
+        
     def setPixmap(self, url):
         self.pixmap = QPixmap(url).scaled(self.width(), self.height(), aspectRatioMode=Qt.AspectRatioMode.KeepAspectRatioByExpanding, transformMode=Qt.TransformationMode.SmoothTransformation)
         self.result_pixmap = self.hover_pixmap = self.pixmap
@@ -66,5 +67,7 @@ class IconButton(QToolButton):
         painter.setBrush(brush)
         painter.setPen(Qt.PenStyle.NoPen)
         painter.drawRoundedRect(self.rect(), 5, 5)
-        painter.drawPixmap(self.result_pixmap.rect(), self.result_pixmap)
+        pix_rect = self.result_pixmap.rect()
+        pix_rect.moveCenter(self.rect().center())
+        painter.drawPixmap(pix_rect, self.result_pixmap)
         

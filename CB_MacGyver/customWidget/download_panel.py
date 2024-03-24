@@ -19,13 +19,15 @@ class Download_Panel():
     _gap = 10
     loading_icon = paths.IMAGE_DIR + '/loading_spin.gif'
     _lock = threading.Lock()
+    item_index = -1
     def __init__(self, parent, info: DownloadInfo) -> None:
 
         #super().__init__(parent)
         self._layout = QBoxLayout(QBoxLayout.Direction.LeftToRight)
         self._layout.setSpacing(0)
         self._layout.setContentsMargins(0, 0, 0, 0)
-
+        self.list_view: QListWidget = parent
+     
         self.info = info
         self.base = QWidget(parent)
         self.base.setLayout(self._layout)
@@ -37,31 +39,7 @@ class Download_Panel():
         self.error_color = QColor(233, 59, 59)
         #error_color = QColor(255, 0, 0)
         self.update_state_color()
-        
-        # if info.state is type.State.Error:
-        #     self.back_color = self.error_color
-
-        # al = 0.1
-        # r = al * front_color.red() +(1 - al) * back_color.red()
-        # g = al * front_color.green() +(1 - al) * back_color.green()
-        # b = al * front_color.blue() +(1 - al) * back_color.blue()
-        # a = al * al + (1 - al) * 1
-        # hover_rgba = '{}, {}, {}, {}'.format(r, g, b, a)
-
-        # rgb = '{}, {}, {}, {}'.format(self.back_color.red(), self.back_color.green(), self.back_color.blue(), 0.6)
        
-        # self.base.setStyleSheet("""
-        #         QWidget{
-        #             background-color: rgba(%s);
-        #             border-width: 0.5px;
-        #             border-style: solid;
-        #             border-color: rgb(240, 240, 240);
-                                
-        #         }         
-        #         QWidget::hover{
-
-        #         }
-        # """% (rgb))
         self.base.setFixedHeight(self._height)
         
         #=========================================
@@ -92,28 +70,16 @@ class Download_Panel():
         #self.title = QLabel(self.base)
         self.title = MyLabel(self.base)
         self.title.setFixedHeight((int)(self._height/2))
-        #self.title.setContentsMargins(0, 0, 0, 0)
-        # if self.info.state is type.State.Error:
-        #     postfix = self.info.url
-        #     if postfix is None:
-        #         postfix = ''
-                
-        #     txt = 'Unkown URL: ' + postfix
-        #     self.title.setText(txt)
-        
-        #self.title.setWordWrap(True)
-        #self.title.setSizePolicy(QSizePolicy.Policy.Ignored, QSizePolicy.Policy.Expanding)
         self.title.setStyleSheet('border: 0; background-color: rgba(255, 0, 255, 0);')
         self._top_layout.addWidget(self.title)
         
+        #Panel Button
         self.pbt = PanelButtons(self.base)
         self._top_layout.addWidget(self.pbt)
         self.pbt.hide()
-        # self.testL = QLabel(self.base)
-        # self.testL.setText("1")
-        # # #self.testL.setFixedWidth(100)
-        # self._top_layout.addWidget(self.testL)        
-
+        self.pbt.add_list_del_btn_action(self.__del_widget)
+        self.pbt.add_file_del_btn_action(self.__del_all)
+     
         self._bottom_layout = QHBoxLayout()
         self._bottom_layout.setSpacing(1)
         self._bottom_layout.setContentsMargins(0, 0, 0, 0)
@@ -131,7 +97,6 @@ class Download_Panel():
         # self.type_icon.released.connect(partial(webbrowser.open, self.info.url))
         self._bottom_layout.addWidget(self.type_icon)
 
-
         #Progress bar
         self.progress = CustomProgressBar(self.base, 100, height=5, background_color=QColor(222, 222, 222))
         self.progress.setBarWidth(100)
@@ -148,31 +113,6 @@ class Download_Panel():
         self.time_widget.setContentsMargins(5, 0, 5, 0)
         self._bottom_layout.addWidget(self.time_widget)
         # self.time_widget.hide()
-
-        # if self.info is not None and self.info.state is not type.State.Error and self.info.type is not None:
-        #     self.type_icon = QPushButton(self.base)
-        #     icon = type.icon_list[self.info.type]
-        #     self.type_icon.setIcon(QIcon(icon))
-        #     icon_size = QSize(25, 25)
-        #     self.type_icon.setFixedSize(icon_size)
-        #     self.type_icon.setIconSize(icon_size)
-        #     self.type_icon.setStyleSheet('border: 0; background-color: rgba(255, 255, 255, 0);')
-        #     self.type_icon.setCursor(Qt.CursorShape.PointingHandCursor)
-        #     self.type_icon.released.connect(partial(webbrowser.open, self.info.url))
-        #     self._bottom_layout.addWidget(self.type_icon)
-
-        #     self.progress = CustomProgressBar(self.base, 100, height=5, background_color=QColor(222, 222, 222))
-        #     self.progress.setBarWidth(100)
-        #     self._bottom_layout.addWidget(self.progress)
-
-        #     self.time_widget = QLabel(self.base)
-        #     self.time_widget.setStyleSheet('border: 0; background-color: rgb(255, 255, 0);')
-        #     self.time_str = '00:00'
-        #     self.time_widget.setText(self.time_str)
-        #     self.time = 0
-        #     self.progress.timer.connect(self._timer)
-        #     self.time_widget.setContentsMargins(5, 0, 5, 0)
-        #     self._bottom_layout.addWidget(self.time_widget)
 
         #temp space
         self.empty = QLabel(self.base)
@@ -193,7 +133,6 @@ class Download_Panel():
        self.title.update()
     
     def set_infomation(self):
-
         pass
 
     def update_state_color(self):
@@ -256,4 +195,19 @@ class Download_Panel():
         
         self.time_widget.setText(self.time_str)
         #print(self.time_str)
+
+    def __del_widget(self):
+        item = self.list_view.takeItem(self.item_index)
+        del item
+
+    def __del_file(self):
+        pass
+
+    def __del_all(self):
+        self.__del_file()
+        self.__del_widget()
+
+    def set_item_index(self, index):
+        self.item_index = index
+        
         
