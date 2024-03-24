@@ -1,7 +1,7 @@
 from PyQt5.QtCore import QEvent, QSize, Qt, QVariantAnimation, QRect, QPoint, QSequentialAnimationGroup
 from PyQt5.QtWidgets import QToolButton, QWidget, QAction
 from PyQt5.QtGui import QIcon, QMouseEvent, QPaintEvent, QPainter, QColor, QPixmap, QBrush, QImage
-import typing
+from multipledispatch import dispatch
 import paths
 from customWidget.ripple_animation import RippleAnimation
 
@@ -53,10 +53,15 @@ class IconButton(QToolButton):
         #super().setIconSize(size)
         self.pixmap = self.pixmap.scaled(size.width(), size.height(), aspectRatioMode=Qt.AspectRatioMode.KeepAspectRatioByExpanding, transformMode=Qt.TransformationMode.SmoothTransformation)
         self.result_pixmap = self.pixmap
-        
-    def setPixmap(self, url):
-        self.pixmap = QPixmap(url).scaled(self.width(), self.height(), aspectRatioMode=Qt.AspectRatioMode.KeepAspectRatioByExpanding, transformMode=Qt.TransformationMode.SmoothTransformation)
+    
+    @dispatch(str, QSize)
+    def setPixmap(self, url: str, size: QSize):
+        self.pixmap = QPixmap(url).scaled(size.width(), size.height(), aspectRatioMode=Qt.AspectRatioMode.KeepAspectRatioByExpanding, transformMode=Qt.TransformationMode.SmoothTransformation)
         self.result_pixmap = self.hover_pixmap = self.pixmap
+
+    @dispatch(str)
+    def setPixmap(self, url: str):
+        self.setPixmap(url, QSize(self.width(), self.height()))
 
     def paintEvent(self, a0: QPaintEvent | None) -> None:
         

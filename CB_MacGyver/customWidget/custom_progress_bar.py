@@ -4,7 +4,7 @@ from PyQt5.QtGui import QPaintEvent
 from PyQt5.QtWidgets import QWidget, QLabel, QSizePolicy
 from PyQt5.QtGui import QPainter, QColor
 import threading
-import typing
+from multipledispatch import dispatch
 import paths
 from myTimer import MyTimer
 
@@ -45,12 +45,12 @@ class CustomProgressBar(QWidget):
         self.total_value = value
         self.update()
 
-    @typing.overload
+    @dispatch(int, int)
     def setBarSize(self, w: int, h: int):
         self.bar_width = w
         self.bar_height = h
 
-    @typing.overload
+    @dispatch(QSize)
     def setBarSize(self, size: QtCore.QSize):
         self.setBarSize(size.width(), size.height())
 
