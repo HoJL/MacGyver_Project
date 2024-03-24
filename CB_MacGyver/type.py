@@ -21,3 +21,5 @@ class DownloadInfo:
     state: State = State.Normal
     error_code :str = None
     size: int = 0
+    file_path:str = None
+    dir:str = None

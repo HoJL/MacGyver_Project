@@ -111,8 +111,8 @@ class Download_M3u8(Downloader):
         tmpdir = paths.BASE_DIR + '/tmp_' + date_str
         file += date_str + '.mp4'
         self.dp.setTitle(file)
-        file_dir = paths.BASE_DIR + '/' + file
-        
+        forder_dir = paths.BASE_DIR
+        file_dir = forder_dir + '/' + file
         try:
             m3u8_obj = self._get_m3u8_obj_with_best_bandwitdth(self.info.url)
         except:
@@ -189,6 +189,8 @@ class Download_M3u8(Downloader):
         shutil.rmtree(tmpdir)
         self.dp.progress.IsPostprocessing(False)
         self.dp.progress.done()
+        self.info.file_path = file_dir
+        self.info.dir = forder_dir
         self.info.state = State.Done
         print('Done....')
         return self.info

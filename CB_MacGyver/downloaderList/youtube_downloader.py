@@ -55,13 +55,13 @@ class Download_Youtube(Downloader):
         self.ydl_opts['logger'] = self.MyLogger()
 
     def _progress_hooks(self, d):
-        if d['status'] == 'downloading':
-            if self.isStart is False:
-                self.isStart = True
-                self.dp.setTitle(d['info_dict']['title'])
-                self.dp.progress.setTotal(d['total_bytes'])
-                self.dp.progress.setValue(0)
+        if self.isStart is False:
+            self.isStart = True
+            self.dp.setTitle(d['info_dict']['title'])
+            self.dp.progress.setTotal(d['total_bytes'])
+            self.dp.progress.setValue(0)
 
+        if d['status'] == 'downloading':           
             self.dp.progress.setValue(d['downloaded_bytes'])
         elif d['status'] == 'finished':
             self.dp.progress.setValue(d['downloaded_bytes'])
@@ -82,20 +82,28 @@ class Download_Youtube(Downloader):
             self.dp.progress.IsPostprocessing(False)
             #postprocessor = 'EmbedThumbnail'
             
-
+    # info['id']
+    # info['title']
+    # info['channel_url']
+    # info['webpage_url']
+    # info['requested_downloads'][0]['__finaldir']
+    # info['requested_downloads'][0]['filepath']
     def download(self):
         super().download()
         self.init_opts()
         with YoutubeDL(self.ydl_opts) as ydl:
             self.dp.progress.start()
             try:
-                ydl.download(self.info.url)
+                #ydl.download(self.info.url)
+                info = ydl.extract_info(self.info.url)
             except Exception as e:
                 self.dp.progress.done()
                 self.info.state = State.Error
                 self.info.error_code = e.__str__()
                 return
             self.dp.progress.done()
+            self.info.dir = info['requested_downloads'][-1]['__finaldir']
+            self.info.file_path = info['requested_downloads'][-1]['filepath']
             self.info.state = State.Done
 
 

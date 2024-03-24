@@ -5,6 +5,7 @@ from PyQt5.QtGui import QColor, QIcon, QPixmap, QFontMetrics
 import threading
 from customWidget.custom_progress_bar import CustomProgressBar
 from customWidget.thumbnail_label import ThumbnailLabel
+import os
 import paths
 import webbrowser
 import type
@@ -20,6 +21,8 @@ class Download_Panel():
     loading_icon = paths.IMAGE_DIR + '/loading_spin.gif'
     _lock = threading.Lock()
     item_index = -1
+    _file_path: str = None
+    _forder_dir: str = None
     def __init__(self, parent, info: DownloadInfo) -> None:
 
         #super().__init__(parent)
@@ -79,6 +82,7 @@ class Download_Panel():
         self.pbt.hide()
         self.pbt.add_list_del_btn_action(self.__del_widget)
         self.pbt.add_file_del_btn_action(self.__del_all)
+        self.pbt.add_open_file_btn_action(self.__open_forder)
      
         self._bottom_layout = QHBoxLayout()
         self._bottom_layout.setSpacing(1)
@@ -183,7 +187,6 @@ class Download_Panel():
         if self.info.state is type.State.Done:
             self.time_widget.hide()
             self.thumbnail.setLoading(False)
-            
 
     def _timer(self):
         self.time += 1
@@ -199,13 +202,27 @@ class Download_Panel():
     def __del_widget(self):
         item = self.list_view.takeItem(self.item_index)
         del item
+        
 
     def __del_file(self):
-        pass
+        if self.info.file_path is None:
+            return
+        try:
+            os.remove(self.info.file_path)
+        except:
+            pass
 
     def __del_all(self):
         self.__del_file()
         self.__del_widget()
+
+    def __open_forder(self):
+        if self.info.dir is None:
+            return
+        try:
+            os.startfile(self.info.dir)
+        except:
+            pass
 
     def set_item_index(self, index):
         self.item_index = index
