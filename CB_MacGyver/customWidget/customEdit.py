@@ -61,17 +61,17 @@ class CustomLineEdit(QLineEdit):
         self.cur_type = None
         for key, value in type.type_list.items():
             if url.find(key) > 0 :
-                self.button.setIcon(QIcon(type.icon_list[value]))
+                self.button.setPixmap(type.icon_list[value])
                 self.cur_type = value
                 return
         
         for key, value in type.ext_list.items():
             if url.endswith(key):
-                self.button.setIcon(QIcon(type.icon_list[value]))
+                self.button.setPixmap(type.icon_list[value])
                 self.cur_type = value
                 return
         
-        self.button.setIcon(QIcon(self.link_icon))
+        self.button.setPixmap(self.link_icon)
     
     def getCurrentTypeAndUrl(self) -> DownloadInfo:
         di = DownloadInfo(self.cur_url, self.cur_type)
