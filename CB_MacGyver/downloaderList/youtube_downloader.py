@@ -10,18 +10,17 @@ class Download_Youtube(Downloader):
     isStart = False
     isOnce = False
     class MyLogger(object):
-        def __init__(self) -> None:
-            pass
+        def __init__(self, info) -> None:
+            self._info = info
         def debug(self, msg):
-            if msg == '[youtube:tab] Playlist recommended: Downloading 0 items':
-                raise ValueError(msg)
-
+            if self._info.state == State.Done:
+                raise InterruptedError("Canceled")
         def info(self, msg):
-            pass
-
+            if self._info.state == State.Done:
+                raise InterruptedError("Canceled")
         def warning(self, msg):
-            pass
-
+            if self._info.state == State.Done:
+                raise InterruptedError("Canceled")
         def error(self, msg):
             raise ValueError(msg)
 
@@ -52,9 +51,12 @@ class Download_Youtube(Downloader):
         }
         self.ydl_opts['writethumbnail'] = True
         self.ydl_opts['postprocessors'].append({'key': 'EmbedThumbnail'})
-        self.ydl_opts['logger'] = self.MyLogger()
+        self.ydl_opts['logger'] = self.MyLogger(self.info)
 
     def _progress_hooks(self, d):
+        if self.info.state == State.Done:
+            raise
+
         if self.isStart is False:
             self.isStart = True
             self.dp.setTitle(d['info_dict']['title'])
@@ -66,7 +68,7 @@ class Download_Youtube(Downloader):
         elif d['status'] == 'finished':
             self.dp.progress.setValue(d['downloaded_bytes'])
             self.dp.progress.download_done()
-
+        
     def _postprocessor_hooks(self, d):
         if d['status'] == 'started':
             self.dp.progress.IsPostprocessing(True)
@@ -91,11 +93,11 @@ class Download_Youtube(Downloader):
     def download(self):
         super().download()
         self.init_opts()
-        with YoutubeDL(self.ydl_opts) as ydl:
+        with YoutubeDL(self.ydl_opts) as self.ydl:
             self.dp.progress.start()
             try:
                 #ydl.download(self.info.url)
-                info = ydl.extract_info(self.info.url)
+                info = self.ydl.extract_info(self.info.url)
             except Exception as e:
                 self.dp.progress.done()
                 self.info.state = State.Error

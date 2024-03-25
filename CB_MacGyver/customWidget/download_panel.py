@@ -202,6 +202,8 @@ class Download_Panel():
 
     def __del_widget(self):
         item = self.list_view.takeItem(self.item_index)
+        self.progress.done()
+        self.info.state = type.State.Done
         del item
         
 

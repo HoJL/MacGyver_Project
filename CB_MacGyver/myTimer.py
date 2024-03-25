@@ -22,10 +22,11 @@ class MyTimer():
         self.__slot = slot
 
     def __timer(self):
-        if self.__slot is not None:
-            self.__slot()
         if self.isStop is True:
             self.timer.cancel()
             return
+        if self.__slot is not None:
+            self.__slot()
+
         self.timer = threading.Timer(self.__interval, self.__timer)
         self.timer.start()
