@@ -1,5 +1,5 @@
 from PyQt5 import QtCore, QtGui
-from PyQt5.QtCore import Qt, QSize, QTimer
+from PyQt5.QtCore import Qt, QSize, QTimer, QFile
 from PyQt5.QtWidgets import *
 from PyQt5.QtGui import QColor, QIcon, QPixmap, QFontMetrics
 import threading
@@ -211,7 +211,7 @@ class Download_Panel():
         if self.info.file_path is None:
             return
         try:
-            os.remove(self.info.file_path)
+            QFile.moveToTrash(self.info.file_path)
         except:
             pass
 
