@@ -45,7 +45,7 @@ class Downloading(threading.Thread):
         item.setSizeHint(self.cls.dp.base.sizeHint())
         listview.setItemWidget(item, self.cls.dp.base)
         listview.addItem(item)
-        self.cls.dp.set_item_index(listview.indexFromItem(item).row())
+        self.cls.dp.set_item(item)
         self.cls.dp.update_state()
         #self.listView.addItem(dp.base)
         

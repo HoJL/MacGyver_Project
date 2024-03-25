@@ -201,11 +201,10 @@ class Download_Panel():
         #print(self.time_str)
 
     def __del_widget(self):
-        item = self.list_view.takeItem(self.item_index)
-        self.progress.done()
-        self.info.state = type.State.Done
+        idx = self.list_view.indexFromItem(self.item).row()
+        item = self.list_view.takeItem(idx)
+
         del item
-        
 
     def __del_file(self):
         if self.info.file_path is None:
@@ -235,7 +234,7 @@ class Download_Panel():
         except:
             pass
 
-    def set_item_index(self, index):
-        self.item_index = index
+    def set_item(self, item):
+        self.item = item
         
         
