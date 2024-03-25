@@ -4,6 +4,7 @@ from PyQt5.QtWidgets import QListWidget, QListWidgetItem
 from customWidget import Download_Panel
 from type import DownloadInfo, State
 import downloader
+import downloaderList
 
 #test m3u8 https://cph-p2p-msl.akamaized.net/hls/live/2000341/test/master.m3u8
 class MyThread(threading.Thread):
@@ -35,7 +36,6 @@ class Downloading(threading.Thread):
 
             mod_str = pkg + type_str + '_' + fix +'er'
             cls_str = fix.capitalize() + '_' + type_str.capitalize()
-
             #module = __import__(mod_str, fromlist=['test_downloader'])
             module = importlib.import_module(mod_str)
             self.cls = getattr(module, cls_str)(info=di, parent=listview) 
