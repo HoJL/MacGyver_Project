@@ -8,6 +8,7 @@ class ThumbnailLabel(QLabel):
 
     zoom_signal = pyqtSignal(int)
     zoom_move_signal = pyqtSignal()
+    click_signal = pyqtSignal()
     pix = None
     __gap = 5
     def __init__(self, size: QSize, pixmapUrl: str, parent, state = type.State.Normal):
@@ -103,6 +104,9 @@ class ThumbnailLabel(QLabel):
         self.mouseX = ev.globalX()
         self.mouseY = ev.globalY()
         self.zoom_move_signal.emit()
+
+    def mousePressEvent(self, ev: QMouseEvent | None) -> None:
+        self.click_signal.emit()
 
     def paintEvent(self, a0: QPaintEvent | None) -> None:
         super().paintEvent(a0)

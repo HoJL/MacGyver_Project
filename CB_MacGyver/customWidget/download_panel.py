@@ -57,6 +57,7 @@ class Download_Panel():
         self.thumbnail = ThumbnailLabel(thumbnail_frame_size, None, self.base, self.info.state)
         self.thumbnail.setFixedSize(thumbnail_frame_size)
         self.thumbnail.setCursor(Qt.CursorShape.PointingHandCursor)
+        self.thumbnail.click_signal.connect(self.__file_open)
         self._layout.addWidget(self.thumbnail)
 
         self._work_layout = QVBoxLayout()
@@ -221,6 +222,14 @@ class Download_Panel():
             return
         try:
             os.startfile(self.info.dir)
+        except:
+            pass
+    
+    def __file_open(self):
+        if self.info.file_path is None:
+            return
+        try:
+            os.startfile(self.info.file_path)
         except:
             pass
 
