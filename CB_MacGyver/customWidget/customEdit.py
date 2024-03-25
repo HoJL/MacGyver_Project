@@ -57,16 +57,16 @@ class CustomLineEdit(QLineEdit):
 
     def __display_type(self):
         url = self.text()
-        self.cur_url = url
+        self.cur_url = url.strip()
         self.cur_type = None
         for key, value in type.type_list.items():
-            if url.find(key) > 0 :
+            if self.cur_url.find(key) > 0 :
                 self.button.setPixmap(type.icon_list[value])
                 self.cur_type = value
                 return
         
         for key, value in type.ext_list.items():
-            if url.endswith(key):
+            if self.cur_url.endswith(key):
                 self.button.setPixmap(type.icon_list[value])
                 self.cur_type = value
                 return
