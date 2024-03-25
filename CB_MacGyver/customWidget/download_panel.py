@@ -181,7 +181,7 @@ class Download_Panel():
             self.time_widget.show()
             icon = type.icon_list[self.info.type]
             self.type_icon.setIcon(QIcon(icon))
-            self.type_icon.released.connect(partial(webbrowser.open, self.info.url))
+            self.type_icon.released.connect(self.__open_web)
             self.thumbnail.setLoading(True)
             self.empty.hide()
 
@@ -233,6 +233,10 @@ class Download_Panel():
             os.startfile(self.info.file_path)
         except:
             pass
+    
+    def __open_web(self):
+        webbrowser.open_new(self.info.url)
+        #os.system("start chrome %s"%self.info.url)
 
     def set_item(self, item):
         self.item = item
