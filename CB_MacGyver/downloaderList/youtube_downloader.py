@@ -105,10 +105,10 @@ class Download_Youtube(Downloader):
                 self.info.state = State.Error
                 self.info.error_code = e.__str__()
                 return
+            self.dp.progress.IsPostprocessing(False)
             self.dp.progress.done()
             self.info.dir = info['requested_downloads'][-1]['__finaldir']
             self.info.file_path = info['requested_downloads'][-1]['filepath']
             self.info.state = State.Done
-
-
-        logging.Logger
+        
+        return self.info
