@@ -30,9 +30,11 @@ class Download_Youtube(Downloader):
             'progress_hooks': [self._progress_hooks],
             'postprocessor_hooks': [self._postprocessor_hooks],
             'outtmpl': 'downloadY/%(title)s.%(ext)s',
+            'extract_flat': True,
             'quiet': True,
             'verbose': False,
             'noplaylist': True,
+            'noprogress': True,
             'postprocessors':[
             {
                 'key': 'MetadataParser',
