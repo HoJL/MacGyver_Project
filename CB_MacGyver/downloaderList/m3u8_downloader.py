@@ -111,8 +111,12 @@ class Download_M3u8(Downloader):
         tmpdir = paths.BASE_DIR + '/tmp_' + date_str
         file += date_str + '.mp4'
         self.dp.setTitle(file)
-        forder_dir = paths.BASE_DIR
-        file_dir = forder_dir + '/' + file
+        forder_dir = os.getcwd()
+        forder_dir += '/M3U8_Download/'
+        if os.path.isdir(forder_dir) is False:
+            os.mkdir(forder_dir)
+        file_dir = forder_dir + file
+        print(file_dir)
         try:
             m3u8_obj = self._get_m3u8_obj_with_best_bandwitdth(self.info.url)
         except:
