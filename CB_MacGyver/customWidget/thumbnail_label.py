@@ -85,6 +85,7 @@ class ThumbnailLabel(QLabel):
         self.splash.setPixmap(pix)
         self.splash.setMask(pix.mask())
         self.splash.setFixedSize(self.big_pix.width(), self.big_pix.height())
+        self.update()
 
     def setLoading(self, b: bool):
         if b is True:
