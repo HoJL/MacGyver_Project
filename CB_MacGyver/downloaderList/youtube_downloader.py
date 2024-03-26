@@ -1,7 +1,7 @@
 import logging
 import yt_dlp
 from yt_dlp import YoutubeDL
-from downloader import Downloader
+from downloader import Downloader, Video
 from type import State
 
 class Download_Youtube(Downloader):
@@ -29,7 +29,7 @@ class Download_Youtube(Downloader):
             'format': 'mp3/bestaudio/best',
             'progress_hooks': [self._progress_hooks],
             'postprocessor_hooks': [self._postprocessor_hooks],
-            'outtmpl': 'downloadY/%(title)s.%(ext)s',
+            'outtmpl': 'Youtube_Download/%(title)s.%(ext)s',
             'extract_flat': True,
             'quiet': True,
             'verbose': False,
@@ -92,6 +92,7 @@ class Download_Youtube(Downloader):
     # info['webpage_url']
     # info['requested_downloads'][0]['__finaldir']
     # info['requested_downloads'][0]['filepath']
+    # info['requested_downloads'][0]['ext']
     def download(self):
         super().download()
         self.init_opts()
@@ -104,11 +105,8 @@ class Download_Youtube(Downloader):
                 self.dp.progress.done()
                 self.info.state = State.Error
                 self.info.error_code = e.__str__()
-                return
-            self.dp.progress.IsPostprocessing(False)
-            self.dp.progress.done()
-            self.info.dir = info['requested_downloads'][-1]['__finaldir']
-            self.info.file_path = info['requested_downloads'][-1]['filepath']
-            self.info.state = State.Done
+                return Video(self.info)
+            
+            self._download_done(info['requested_downloads'][-1]['filepath'], info['requested_downloads'][-1]['__finaldir'])
         
-        return self.info
+        return Video(self.info)

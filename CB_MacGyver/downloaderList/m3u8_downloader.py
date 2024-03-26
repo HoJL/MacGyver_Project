@@ -11,7 +11,7 @@ from concurrent.futures import ThreadPoolExecutor
 import time
 from url_request import *
 
-from downloader import Downloader
+from downloader import Downloader, Video
 from type import DownloadInfo, State
 import paths
 
@@ -167,7 +167,6 @@ class Download_M3u8(Downloader):
                 with open(file_path, 'wb') as fin:
                     fin.write(content)
 
-        print('d complete')
         self.dp.progress.download_done()
         order_segment_list_file_path = os.path.join(tmpdir, "ts_ls.txt")
         cnt = 0
@@ -188,14 +187,8 @@ class Download_M3u8(Downloader):
         print(merge_cmd)
         p = subprocess.Popen(merge_cmd, shell=True, stdout=subprocess.PIPE,
                                 stderr=subprocess.PIPE)
-        print("merging...")
         p.communicate()
         shutil.rmtree(tmpdir)
-        self.dp.progress.IsPostprocessing(False)
-        self.dp.progress.done()
-        self.info.file_path = file_dir
-        self.info.dir = forder_dir
-        self.info.state = State.Done
-        print('Done....')
-        return self.info
+        self._download_done(file_dir, forder_dir)
+        return Video(self.info)
         
