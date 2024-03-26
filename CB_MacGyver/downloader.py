@@ -1,5 +1,5 @@
 from customWidget import Download_Panel
-from type import DownloadInfo
+from type import DownloadInfo, State
 
 class Downloader:
     type = None
@@ -13,3 +13,15 @@ class Downloader:
 
     def download(self) -> DownloadInfo:
         pass
+
+    def _download_done(self, file_dir, forder_dir):
+        self.dp.progress.IsPostprocessing(False)
+        self.dp.progress.done()
+        self.info.file_path = file_dir
+        self.info.dir = forder_dir
+        self.info.state = State.Done
+
+class Video:
+
+    def __init__(self, info: DownloadInfo) -> None:
+        self.info = info
