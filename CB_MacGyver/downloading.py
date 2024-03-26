@@ -15,10 +15,9 @@ class MyThread(threading.Thread):
         if self._target is not None:
             try:
                 self._return = self._target(*self._args, **self._kwargs)
-            except:
-                self._return = None
-                pass
-    
+            except Exception as e:
+                self._return = Exception(e)
+                
     def join(self, timeout: float | None = None):
         threading.Thread.join(self, timeout)
         return self._return
@@ -70,13 +69,20 @@ class Downloading(threading.Thread):
     
     def run(self) -> None:
         dp: Download_Panel = self.cls.dp
-        thread1 = MyThread(target = self.cls.download)
-        thread1.start()
-        re = thread1.join()
-        if re is None: 
-            return
-        dp.update_state_color()
-        dp.update_state()
+        try:
+            thread1 = MyThread(target = self.cls.download)
+            thread1.start()
+            re = thread1.join()
+            if re is None:
+                return
+            if type(re) == Exception:
+                raise Exception(re)
+        except Exception as e:
+            dp.info.state = State.Error
+            dp.info.error_code = e.__str__()
+        finally: 
+            dp.update_state_color()
+            dp.update_state()
 
     def join(self, timeout: float | None = None) -> None:
         threading.Thread.join(self, timeout)
