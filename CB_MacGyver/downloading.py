@@ -41,31 +41,13 @@ class Downloading(threading.Thread):
                 
             
         item = QListWidgetItem(listview)
-        item.setSizeHint(self.cls.dp.base.sizeHint())
-        listview.setItemWidget(item, self.cls.dp.base)
+        print(self.cls.dp.sizeHint())
+        #print(self.cls.dp.base.sizeHint())
+        item.setSizeHint(self.cls.dp.size())
+        listview.setItemWidget(item, self.cls.dp)
         listview.addItem(item)
         self.cls.dp.set_item(item)
         self.cls.dp.update_state()
-        #self.listView.addItem(dp.base)
-        
-        # type_str = di.type
-        # fix = 'download'
-        # pkg = 'downloaderList.'
-
-        # mod_str = pkg + type_str + '_' + fix +'er'
-        # cls_str = fix.capitalize() + '_' + type_str.capitalize()
-
-        # #module = __import__(mod_str, fromlist=['test_downloader'])
-        # module = importlib.import_module(mod_str)
-        # self.cls = getattr(module, cls_str)(info=di, parent=listview)
-        # item = QListWidgetItem(listview)
-        # item.setSizeHint(self.cls.dp.base.sizeHint())
-        # listview.setItemWidget(item, self.cls.dp.base)
-        # listview.addItem(item)
-        #self.ly.addWidget(cls.dp.base)
-        #cls.download(info=di)
-        # thread1 = threading.Thread(target = self.cls.download)
-        # thread1.start()
     
     def run(self) -> None:
         dp: Download_Panel = self.cls.dp

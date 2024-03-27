@@ -14,7 +14,7 @@ from functools import partial
 from myTimer import MyTimer
 from customWidget.myLabel import MyLabel
 from customWidget.panel_buttons import PanelButtons
-class Download_Panel():
+class Download_Panel(QWidget):
     
     _height = 80
     _gap = 10
@@ -25,25 +25,22 @@ class Download_Panel():
     _forder_dir: str = None
     def __init__(self, parent, info: DownloadInfo) -> None:
 
-        #super().__init__(parent)
+        super().__init__(parent)
         self._layout = QBoxLayout(QBoxLayout.Direction.LeftToRight)
         self._layout.setSpacing(0)
         self._layout.setContentsMargins(0, 0, 0, 0)
         self.list_view: QListWidget = parent
-     
+        self.setFixedHeight(self._height)
+        print(self.size())
+        self.setLayout(self._layout)
         self.info = info
-        self.base = QWidget(parent)
-        self.base.setLayout(self._layout)
-        self.base.setFocusPolicy(Qt.FocusPolicy.NoFocus)
-        self.base.enterEvent = self.enterEvent
-        self.base.leaveEvent = self.leaveEvent
+        
+        self.setFocusPolicy(Qt.FocusPolicy.NoFocus)
         self.back_color = QColor(255, 255, 255)
         front_color = QColor(100, 100, 200)
         self.error_color = QColor(233, 59, 59)
-        #error_color = QColor(255, 0, 0)
+        self.setAttribute(Qt.WidgetAttribute.WA_StyledBackground)
         self.update_state_color()
-       
-        self.base.setFixedHeight(self._height)
         
         #=========================================
         #∥       ∥ title
@@ -54,7 +51,7 @@ class Download_Panel():
         #Thmbnail
         thumbnail_frame_size = QtCore.QSize((int)(self._height * 1.5), (self._height))
         self.pix = QPixmap('D:/CB_MacGyver/CB_MacGyver/1.png').scaled(thumbnail_frame_size, aspectRatioMode=Qt.AspectRatioMode.KeepAspectRatio, transformMode=Qt.TransformationMode.SmoothTransformation)
-        self.thumbnail = ThumbnailLabel(thumbnail_frame_size, None, self.base, self.info.state)
+        self.thumbnail = ThumbnailLabel(thumbnail_frame_size, None, self, self.info.state)
         self.thumbnail.setFixedSize(thumbnail_frame_size)
         self.thumbnail.setCursor(Qt.CursorShape.PointingHandCursor)
         self.thumbnail.click_signal.connect(self.__file_open)
@@ -72,13 +69,13 @@ class Download_Panel():
 
         #Title
         #self.title = QLabel(self.base)
-        self.title = MyLabel(self.base)
+        self.title = MyLabel(self)
         self.title.setFixedHeight((int)(self._height/2))
         self.title.setStyleSheet('border: 0; background-color: rgba(255, 0, 255, 0);')
         self._top_layout.addWidget(self.title)
         
         #Panel Button
-        self.pbt = PanelButtons(self.base)
+        self.pbt = PanelButtons(self)
         self._top_layout.addWidget(self.pbt)
         self.pbt.hide()
         self.pbt.add_list_del_btn_action(self.__del_widget)
@@ -91,7 +88,7 @@ class Download_Panel():
         self._work_layout.addLayout(self._bottom_layout)
 
         #Type Icon
-        self.type_icon = QPushButton(self.base)
+        self.type_icon = QPushButton(self)
         # icon = type.icon_list[self.info.type]
         # self.type_icon.setIcon(QIcon(icon))
         icon_size = QSize(25, 25)
@@ -103,13 +100,13 @@ class Download_Panel():
         self._bottom_layout.addWidget(self.type_icon)
 
         #Progress bar
-        self.progress = CustomProgressBar(self.base, 100, height=5, background_color=QColor(222, 222, 222))
+        self.progress = CustomProgressBar(self, 100, height=5, background_color=QColor(222, 222, 222))
         self.progress.setBarWidth(100)
         self._bottom_layout.addWidget(self.progress)
         # self.progress.hide()
 
         #Time
-        self.time_widget = QLabel(self.base)
+        self.time_widget = QLabel(self)
         self.time_widget.setStyleSheet('border: 0; background-color: rgba(255, 255, 255, 0);')
         self.time_str = '00:00'
         self.time_widget.setText(self.time_str)
@@ -120,7 +117,7 @@ class Download_Panel():
         # self.time_widget.hide()
 
         #temp space
-        self.empty = QLabel(self.base)
+        self.empty = QLabel(self)
         self.empty.setObjectName('empty')
         self.empty.hide()
         self.empty.setStyleSheet('border: 0; background-color: rgba(255, 255, 255, 0);')
@@ -147,18 +144,14 @@ class Download_Panel():
 
         rgb = '{}, {}, {}, {}'.format(back_color.red(), back_color.green(), back_color.blue(), 0.6)
        
-        self.base.setStyleSheet("""
+        self.setStyleSheet("""
                 QWidget{
                     background-color: rgba(%s);
                     border-width: 0.5px;
                     border-style: solid;
-                    border-color: rgb(240, 240, 240);
-                                
-                }         
-                QWidget::hover{
-
+                    border-color: rgb(240, 240, 240);              
                 }
-        """% (rgb))
+        """%(rgb))
 
     def update_state(self):
         if self.info.state is type.State.Error:
