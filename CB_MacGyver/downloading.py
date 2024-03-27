@@ -41,8 +41,6 @@ class Downloading(threading.Thread):
                 
             
         item = QListWidgetItem(listview)
-        print(self.cls.dp.sizeHint())
-        #print(self.cls.dp.base.sizeHint())
         item.setSizeHint(self.cls.dp.size())
         listview.setItemWidget(item, self.cls.dp)
         listview.addItem(item)

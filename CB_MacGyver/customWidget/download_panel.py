@@ -31,7 +31,6 @@ class Download_Panel(QWidget):
         self._layout.setContentsMargins(0, 0, 0, 0)
         self.list_view: QListWidget = parent
         self.setFixedHeight(self._height)
-        print(self.size())
         self.setLayout(self._layout)
         self.info = info
         
