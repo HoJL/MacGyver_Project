@@ -39,11 +39,10 @@ class Downloading(threading.Thread):
             module = importlib.import_module(mod_str)
             self.cls = getattr(module, cls_str)(info=di, parent=listview) 
                 
-            
-        item = QListWidgetItem(listview)
+        item = QListWidgetItem()
         item.setSizeHint(self.cls.dp.size())
+        listview.insertItem(0, item)
         listview.setItemWidget(item, self.cls.dp)
-        listview.addItem(item)
         self.cls.dp.set_item(item)
         self.cls.dp.update_state()
     
