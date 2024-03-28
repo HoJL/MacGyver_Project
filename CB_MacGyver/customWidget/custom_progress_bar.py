@@ -1,17 +1,19 @@
 from PyQt5 import QtCore, QtGui
-from PyQt5.QtCore import Qt, QRectF, QSize, QTimer
+from PyQt5.QtCore import Qt, QRectF, QSize, QTimer, pyqtSignal
 from PyQt5.QtGui import QPaintEvent
 from PyQt5.QtWidgets import QWidget, QLabel, QSizePolicy
 from PyQt5.QtGui import QPainter, QColor
 import threading
 from multipledispatch import dispatch
 import paths
-from myTimer import MyTimer
 
 class CustomProgressBar(QWidget):
 
     is_postprocessing = False
     thread_lock = threading.Lock()
+    time_start_signal = pyqtSignal()
+    time_stop_signal = pyqtSignal()
+
     def __init__(self, parent, total_value, segment=100, width=100, height=20, is_percent=True, background_color=QColor(255,255,255) ,chunk_color=QColor(0,149,255), text_color=QColor(0, 0, 0)) -> None:
         super().__init__(parent)
         self.segment = segment
@@ -33,9 +35,10 @@ class CustomProgressBar(QWidget):
         self.movie.start()
         self.la.hide()
         self.la.setStyleSheet('border: 0; background-color: rgba(0, 0, 0 ,0)')
-        self.timer = MyTimer()
-        self.timer.setInterval(1)
-        #self.movie.frameChanged.connect(self.repaint)
+        self.timer = QTimer(self)
+        self.timer.moveToThread(self.thread())
+        self.time_start_signal.connect(self.__start)
+        self.time_stop_signal.connect(self.__done)
 
     def setValue(self, value):
         self.cur_value = value
@@ -64,12 +67,11 @@ class CustomProgressBar(QWidget):
         self.cur_value += 1
         self.update()
 
-    def start(self):
-        self.timer.start()
-    
-    def done(self):
+    def __start(self):
+        self.timer.start(1000)
+
+    def __done(self):
         self.timer.stop()
-        
 
     def download_done(self):
         self.cur_value = self.total_value

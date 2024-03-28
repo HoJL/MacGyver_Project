@@ -14,6 +14,7 @@ from url_request import *
 from downloader import Downloader, Video
 from type import DownloadInfo, State
 import paths
+import threading
 
 EncryptedKey = collections.namedtuple(typename='EncryptedKey',
                                       field_names=['method', 'value', 'iv'])
@@ -116,7 +117,8 @@ class Download_M3u8(Downloader):
         if os.path.isdir(forder_dir) is False:
             os.mkdir(forder_dir)
         file_dir = forder_dir + file
-        print(file_dir)
+
+        self.dp.progress.time_start_signal.emit()
         try:
             m3u8_obj = self._get_m3u8_obj_with_best_bandwitdth(self.info.url)
         except:
@@ -127,7 +129,8 @@ class Download_M3u8(Downloader):
         key_url_content_triple = list()
         self.dp.progress.setTotal(len(key_segment_pairs))
         self.dp.progress.setValue(0)
-        self.dp.progress.start()
+        #self.dp.progress.start()
+        
         work_start_time = time.time()
         with ThreadPoolExecutor(max_workers=100) as executor:
             future_to_key_url = {executor.submit(self._download_segment, segment_url): (key, segment_url) for key, segment_url in key_segment_pairs}
@@ -178,13 +181,13 @@ class Download_M3u8(Downloader):
                 if cnt == 0:
                     cnt += 1
                     thumbnail_path = os.path.join(tmpdir, 'tb.png')
-                    thumb_cmd = "ffmpeg -y -ss 0 -i " + segment_file_path + " -frames:v 1 " + thumbnail_path
-                    r = subprocess.call(thumb_cmd)
+                    thumb_cmd = "ffmpeg -y -nostats -loglevel error -ss 0 -i " + segment_file_path + " -vcodec png -vframes 1 " + thumbnail_path
+                    tumb_p = subprocess.Popen(thumb_cmd, shell=True, stdout=subprocess.PIPE,
+                                            stderr=subprocess.PIPE)
+                    tumb_p.communicate()
                     self.dp.thumbnail.set_thumb_pixmap(thumbnail_path)
 
-        
-        merge_cmd = "ffmpeg -y -f concat -safe 0 -i " + order_segment_list_file_path + " -c copy " + file_dir
-        print(merge_cmd)
+        merge_cmd = "ffmpeg -y -nostats -loglevel error -f concat -safe 0 -i " + order_segment_list_file_path + " -c copy " + file_dir
         p = subprocess.Popen(merge_cmd, shell=True, stdout=subprocess.PIPE,
                                 stderr=subprocess.PIPE)
         p.communicate()

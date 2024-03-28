@@ -97,12 +97,12 @@ class Download_Youtube(Downloader):
         super().download()
         self.init_opts()
         with YoutubeDL(self.ydl_opts) as self.ydl:
-            self.dp.progress.start()
+            self.dp.progress.time_start_signal.emit()
             try:
                 #ydl.download(self.info.url)
                 info = self.ydl.extract_info(self.info.url)
             except Exception as e:
-                self.dp.progress.done()
+                self.dp.progress.time_stop_signal()
                 self.info.state = State.Error
                 self.info.error_code = e.__str__()
                 return Video(self.info)

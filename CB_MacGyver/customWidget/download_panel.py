@@ -11,7 +11,6 @@ import webbrowser
 import type
 from type import DownloadInfo
 from functools import partial
-from myTimer import MyTimer
 from customWidget.myLabel import MyLabel
 from customWidget.panel_buttons import PanelButtons
 class Download_Panel(QWidget):
@@ -67,7 +66,6 @@ class Download_Panel(QWidget):
         self._work_layout.addLayout(self._top_layout)
 
         #Title
-        #self.title = QLabel(self.base)
         self.title = MyLabel(self)
         self.title.setFixedHeight((int)(self._height/2))
         self.title.setStyleSheet('border: 0; background-color: rgba(255, 0, 255, 0);')
@@ -89,20 +87,17 @@ class Download_Panel(QWidget):
         #Type Icon
         self.type_icon = QPushButton(self)
         # icon = type.icon_list[self.info.type]
-        # self.type_icon.setIcon(QIcon(icon))
         icon_size = QSize(25, 25)
         self.type_icon.setFixedSize(icon_size)
         self.type_icon.setIconSize(icon_size)
         self.type_icon.setStyleSheet('border: 0; background-color: rgba(255, 255, 255, 0);')
         self.type_icon.setCursor(Qt.CursorShape.PointingHandCursor)
-        # self.type_icon.released.connect(partial(webbrowser.open, self.info.url))
         self._bottom_layout.addWidget(self.type_icon)
 
         #Progress bar
         self.progress = CustomProgressBar(self, 100, height=5, background_color=QColor(222, 222, 222))
         self.progress.setBarWidth(100)
         self._bottom_layout.addWidget(self.progress)
-        # self.progress.hide()
 
         #Time
         self.time_widget = QLabel(self)
@@ -110,10 +105,9 @@ class Download_Panel(QWidget):
         self.time_str = '00:00'
         self.time_widget.setText(self.time_str)
         self.time = 0
-        self.progress.timer.connect(self._timer)
+        self.progress.timer.timeout.connect(self._timer)
         self.time_widget.setContentsMargins(5, 0, 5, 0)
         self._bottom_layout.addWidget(self.time_widget)
-        # self.time_widget.hide()
 
         #temp space
         self.empty = QLabel(self)
@@ -121,7 +115,6 @@ class Download_Panel(QWidget):
         self.empty.hide()
         self.empty.setStyleSheet('border: 0; background-color: rgba(255, 255, 255, 0);')
         self._bottom_layout.addWidget(self.empty)
-        #self.update_state()
     
     def enterEvent(self, e: QtCore.QEvent | None) -> None:
         self.pbt.show()
@@ -150,7 +143,7 @@ class Download_Panel(QWidget):
                     border-style: solid;
                     border-color: rgb(240, 240, 240);              
                 }
-        """%(rgb))
+        """% (rgb))
 
     def update_state(self):
         if self.info.state is type.State.Error:
@@ -190,7 +183,6 @@ class Download_Panel(QWidget):
             self.time_str = '{:02d}:{:02d}:{:02d}'.format(h, m, s)
         
         self.time_widget.setText(self.time_str)
-        #print(self.time_str)
 
     def __del_widget(self):
         idx = self.list_view.indexFromItem(self.item).row()
