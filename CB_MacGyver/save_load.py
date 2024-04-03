@@ -16,7 +16,7 @@ def save(listwidget: QListWidget):
             #title text
             #thumbnail image
             #DownloadInfo class
-        
+
         dp = return_download_panel_obj(listwidget.itemWidget(item))
         #dp: Download_Panel = listwidget.itemWidget(item)
         title_txt = dp.title.txt
@@ -36,7 +36,7 @@ def load(listwidget: QListWidget):
     cnt = setting.value('Downloaded/count')
     if cnt is None or cnt == 0:
         return
-    
+
     for idx in range(int(cnt)):
         di = setting.value('Downloaded/%d.info'% idx)
         dw = downloader.Downloader(di, listwidget)

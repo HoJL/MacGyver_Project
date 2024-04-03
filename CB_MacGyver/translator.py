@@ -6,8 +6,7 @@ class Translator:
         self._tr = QTranslator()
         self._app = app
         self.changeLanguage(file)
-        
-    
+
     def changeLanguage(self, file: str) -> None:
         if (file == None): return None
         tr = QTranslator()

@@ -65,12 +65,12 @@ class Download_Youtube(Downloader):
             self.dp.progress.setTotal(d['total_bytes'])
             self.dp.progress.setValue(0)
 
-        if d['status'] == 'downloading':           
+        if d['status'] == 'downloading':
             self.dp.progress.setValue(d['downloaded_bytes'])
         elif d['status'] == 'finished':
             self.dp.progress.setValue(d['downloaded_bytes'])
             self.dp.progress.download_done()
-        
+
     def _postprocessor_hooks(self, d):
         if d['status'] == 'started':
             self.dp.progress.IsPostprocessing(True)
@@ -85,7 +85,7 @@ class Download_Youtube(Downloader):
         elif d['status'] == 'finished':
             self.dp.progress.IsPostprocessing(False)
             #postprocessor = 'EmbedThumbnail'
-            
+
     # info['id']
     # info['title']
     # info['channel_url']
@@ -108,5 +108,5 @@ class Download_Youtube(Downloader):
                 return Video(self.info)
             
             self._download_done(info['requested_downloads'][-1]['filepath'], info['requested_downloads'][-1]['__finaldir'])
-        
+
         return Video(self.info)

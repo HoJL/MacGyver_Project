@@ -28,7 +28,7 @@ class Download_Panel(QWidget):
     class MyStyle(QProxyStyle):
         def pixelMetric(self, metric: QStyle.PixelMetric, option: QStyleOption | None = ..., widget: QWidget | None = ...) -> int:
             return 22
-        
+
     def __init__(self, parent, info: DownloadInfo) -> None:
 
         super().__init__(parent)
@@ -148,7 +148,7 @@ class Download_Panel(QWidget):
                     background-color: rgba(%s);
                     border-width: 0.5px;
                     border-style: solid;
-                    border-color: rgb(240, 240, 240);              
+                    border-color: rgb(240, 240, 240);
                 }
         """% (rgb))
 
@@ -231,5 +231,4 @@ class Download_Panel(QWidget):
 
     def set_item(self, item):
         self.item = item
-        
-        
+

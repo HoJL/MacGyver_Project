@@ -19,8 +19,6 @@ class MainWindow(QMainWindow):
 
     WIN_W = 540
     WIN_H = 600
-    # exit_imgage = paths.BASE_DIR + '/images/Exit_Icon.png'
-    # win_icon = paths.BASE_DIR + '/images/말랑곰.png'
     sig = pyqtSignal()
     def __init__(self, app: QApplication) -> None:
         super().__init__()
@@ -97,7 +95,7 @@ class MainWindow(QMainWindow):
         status_layout = QGridLayout()
         status_layout.addWidget(self.status, 0, 0, 1, 0)
         #self.contentGrid.addWidget(self.status, 1, 0, 1, 0)
-        
+
         mainGrid.addLayout(downloadGrid, 0, 0, 1, 0)
         mainGrid.addLayout(self.contentGrid, 1, 0, 1, 0)
         mainGrid.addLayout(status_layout,2, 0, 1, 0)
@@ -137,10 +135,10 @@ class MainWindow(QMainWindow):
         if di.url is None or di.url == '':
             print('Url을 입력해 주세요')
             return
-        
+
         down = downloading.Downloading(di, self.listView)
         down.start()
-    
+
     def closeEvent(self, a0: QCloseEvent | None) -> None:
         save_load.save(self.listView)
 

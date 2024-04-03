@@ -11,7 +11,6 @@ class IconButton(QToolButton):
     def __init__(self, parent: QWidget | None = ..., size: QSize = QSize(25, 25)) -> None:
         super().__init__(parent)
         self.setCursor(Qt.CursorShape.PointingHandCursor)
-        #self.test_img = QIcon(paths.IMAGE_DIR + '/Link_Icon.png')
         self.setFixedSize(size)
         self.icon_size = size - QSize(2, 2)
         self.pixmap = QPixmap(MyIcon.LINK_ICON).scaled(self.icon_size, aspectRatioMode=Qt.AspectRatioMode.KeepAspectRatioByExpanding, transformMode=Qt.TransformationMode.SmoothTransformation)

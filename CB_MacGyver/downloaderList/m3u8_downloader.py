@@ -130,7 +130,7 @@ class Download_M3u8(Downloader):
         self.dp.progress.setTotal(len(key_segment_pairs))
         self.dp.progress.setValue(0)
         #self.dp.progress.start()
-        
+
         work_start_time = time.time()
         with ThreadPoolExecutor(max_workers=100) as executor:
             future_to_key_url = {executor.submit(self._download_segment, segment_url): (key, segment_url) for key, segment_url in key_segment_pairs}
@@ -194,4 +194,3 @@ class Download_M3u8(Downloader):
         shutil.rmtree(tmpdir)
         self._download_done(file_dir, forder_dir)
         return Video(self.info)
-        

@@ -16,7 +16,7 @@ class Loading_Label(QLabel):
         self.loading.setScaledSize(QSize(35, 35))
         self.setMovie(self.loading)
         self.hide()
-        
+
     def start(self):
         self.show()
         self.loading.start()

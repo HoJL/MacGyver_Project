@@ -29,10 +29,9 @@ def request_for(url, max_try_times=1, headers=None, data=None, timeout=30,
 
             with urllib.request.urlopen(url=request,
                                         timeout=timeout) as response:
-                
+
                 response_code = response.getcode()
                 response_content = response.read()
-                
 
             if response_code == 200:
                 break

@@ -17,7 +17,7 @@ class MyThread(threading.Thread):
                 self._return = self._target(*self._args, **self._kwargs)
             except Exception as e:
                 self._return = Exception(e)
-                
+
     def join(self, timeout: float | None = None):
         threading.Thread.join(self, timeout)
         return self._return
@@ -38,14 +38,14 @@ class Downloading(threading.Thread):
             #module = __import__(mod_str, fromlist=['test_downloader'])
             module = importlib.import_module(mod_str)
             self.cls = getattr(module, cls_str)(info=di, parent=listview) 
-                
+
         item = QListWidgetItem()
         item.setSizeHint(self.cls.dp.size())
         listview.insertItem(0, item)
         listview.setItemWidget(item, self.cls.dp)
         self.cls.dp.set_item(item)
         self.cls.dp.update_state()
-    
+
     def run(self) -> None:
         dp: Download_Panel = self.cls.dp
         try:
