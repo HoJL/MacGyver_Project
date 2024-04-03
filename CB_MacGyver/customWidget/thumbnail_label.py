@@ -11,6 +11,8 @@ class ThumbnailLabel(QLabel):
     click_signal = pyqtSignal()
     pix = None
     __gap = 5
+    thumb_base: QPixmap = None
+    
     def __init__(self, size: QSize, pixmapUrl: str, parent, state = type.State.Normal):
         super().__init__(parent)
 
@@ -49,21 +51,23 @@ class ThumbnailLabel(QLabel):
         QWidget(self.root).setWindowState(Qt.WindowState.WindowActive)
         self.set_thumb_pixmap(pixmapUrl)
         
-    def rounded_image(self): 
-  
-        image = QPixmap(self.pix).scaled(self.overlayX, self.overlayY, aspectRatioMode=Qt.AspectRatioMode.KeepAspectRatioByExpanding, transformMode=Qt.TransformationMode.SmoothTransformation)        
+    def rounded_image(self):
+        image = QPixmap(self.pix)
+        return self.rounded_image_by_pixmap(image)
+    
+    def rounded_image_by_pixmap(self, pixmap: QPixmap):
+        image = pixmap
         out_img = QPixmap(image.width(), image.height())
         out_img.fill(Qt.GlobalColor.transparent)
-     
         painter = QPainter(out_img)
         painter.setRenderHints(QPainter.RenderHint.Antialiasing | QPainter.RenderHint.HighQualityAntialiasing | QPainter.RenderHint.SmoothPixmapTransform, True)
         brush = QBrush(image)
-        painter.setBrush(brush) 
-        painter.setPen(Qt.PenStyle.NoPen) 
+        painter.setBrush(brush)
+        painter.setPen(Qt.PenStyle.NoPen)
         painter.fillRect(0, 0, image.width(), image.height(), QColor(255, 255, 255, 0))
         painter.drawRoundedRect(0, 0, image.width(), image.height(), 8, 8)
         painter.end()
-        return out_img 
+        return out_img
 
     def __del__(self):
         self.splash = None
@@ -82,6 +86,19 @@ class ThumbnailLabel(QLabel):
         #self.big_pix = QPixmap(self.pix).scaled(self.overlayX, self.overlayY, aspectRatioMode=Qt.AspectRatioMode.KeepAspectRatio, transformMode=Qt.TransformationMode.SmoothTransformation)
         self.pix = pixUrl
         pix = self.rounded_image()
+        self.splash.setPixmap(pix)
+        self.splash.setMask(pix.mask())
+        self.splash.setFixedSize(self.big_pix.width(), self.big_pix.height())
+        self.update()
+
+    def set_thumb_pixmap_by_load(self, pixmap: QPixmap):
+        if pixmap is None:
+            return
+        
+        self.thumb_base = pixmap.scaled(self.thumbsize, aspectRatioMode=Qt.AspectRatioMode.KeepAspectRatio, transformMode=Qt.TransformationMode.SmoothTransformation)
+        self.thumb_small = pixmap.scaled(self.thumbsize.width() - 5, self.thumbsize.height() - 5, aspectRatioMode=Qt.AspectRatioMode.KeepAspectRatio, transformMode=Qt.TransformationMode.SmoothTransformation)
+        self.big_pix = pixmap
+        pix = self.rounded_image_by_pixmap(pixmap)
         self.splash.setPixmap(pix)
         self.splash.setMask(pix.mask())
         self.splash.setFixedSize(self.big_pix.width(), self.big_pix.height())
@@ -120,7 +137,7 @@ class ThumbnailLabel(QLabel):
         width = self.thumbsize.width()
         height = self.thumbsize.height()
 
-        if self.pix is None or self.state is type.State.Error:
+        if self.thumb_base is None or self.state is type.State.Error:
             left = self.__gap
             top = self.__gap
             width -= self.__gap * 2

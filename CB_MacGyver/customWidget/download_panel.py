@@ -3,6 +3,8 @@ from PyQt5.QtCore import Qt, QSize, QTimer, QFile
 from PyQt5.QtWidgets import *
 from PyQt5.QtGui import QColor, QIcon, QPixmap, QFontMetrics
 import threading
+
+from PyQt5.QtWidgets import QStyle, QStyleOption, QWidget
 from customWidget.custom_progress_bar import CustomProgressBar
 from customWidget.thumbnail_label import ThumbnailLabel
 import os
@@ -13,15 +15,20 @@ from type import DownloadInfo
 from functools import partial
 from customWidget.myLabel import MyLabel
 from customWidget.panel_buttons import PanelButtons
+from enum import Enum
 class Download_Panel(QWidget):
     
     _height = 80
     _gap = 10
-    loading_icon = paths.IMAGE_DIR + '/loading_spin.gif'
     _lock = threading.Lock()
     item_index = -1
     _file_path: str = None
     _forder_dir: str = None
+
+    class MyStyle(QProxyStyle):
+        def pixelMetric(self, metric: QStyle.PixelMetric, option: QStyleOption | None = ..., widget: QWidget | None = ...) -> int:
+            return 22
+        
     def __init__(self, parent, info: DownloadInfo) -> None:
 
         super().__init__(parent)
@@ -39,7 +46,7 @@ class Download_Panel(QWidget):
         self.error_color = QColor(233, 59, 59)
         self.setAttribute(Qt.WidgetAttribute.WA_StyledBackground)
         self.update_state_color()
-        
+
         #=========================================
         #∥       ∥ title
         #∥ thumb ∥ -------------------------------

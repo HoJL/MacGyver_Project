@@ -5,13 +5,11 @@ from PyQt5.QtCore import *
 from PyQt5.QtWidgets import QWidget
 #from .rippleEffect import IconButton
 import customWidget.iconbutton
-import paths
+from paths import MyIcon
 import type
 from type import DownloadInfo
 
 class CustomLineEdit(QLineEdit):
-
-    link_icon = paths.IMAGE_DIR + '/Link_Icon.png'
     cur_url = None
     cur_type = None
 
@@ -71,7 +69,7 @@ class CustomLineEdit(QLineEdit):
                 self.cur_type = value
                 return
         
-        self.button.setPixmap(self.link_icon)
+        self.button.setPixmap(MyIcon.LINK_ICON)
     
     def getCurrentTypeAndUrl(self) -> DownloadInfo:
         di = DownloadInfo(self.cur_url, self.cur_type)

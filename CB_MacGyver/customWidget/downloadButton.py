@@ -6,7 +6,8 @@ from PyQt5.QtCore import *
 from PyQt5.QtWidgets import QWidget
 #from .rippleEffect import IconButton
 import customWidget.iconbutton
-import paths
+from paths import MyIcon
+
 class DownloadButton(customWidget.iconbutton.IconButton):
 
     isIn = False
@@ -23,9 +24,7 @@ class DownloadButton(customWidget.iconbutton.IconButton):
     hilightColor = QColor(160, 20, 20)
     pixmapDown :QPixmap
     pixmapArrow :QPixmap
-    download_icon = paths.IMAGE_DIR + '/Download_Icon.png'
-    downArrow_image = paths.IMAGE_DIR + '/down_arrow.png'
-    
+
     def __init__(self, edit, parent = None, ) -> None:
         super().__init__(parent, QSize(self.btnW, self.btnH))
         # menu = QMenu()
@@ -38,8 +37,8 @@ class DownloadButton(customWidget.iconbutton.IconButton):
         self.setFixedHeight(self.btnH)
         self.setFixedWidth(self.btnW)
         self.setMouseTracking(True)
-        self.pixmapDown = QPixmap(self.download_icon)
-        self.pixmapArrow = QPixmap(self.downArrow_image)
+        self.pixmapDown = QPixmap(MyIcon.DOWNLOAD_ICON)
+        self.pixmapArrow = QPixmap(MyIcon.MENU_ARROW_ICON)
         self.pixmapDown = self.pixmapDown.scaled(20, 18, Qt.AspectRatioMode.KeepAspectRatio)
         #self.installEventFilter(self)
         #self.setPopupMode(QToolButton.ToolButtonPopupMode.MenuButtonPopup)

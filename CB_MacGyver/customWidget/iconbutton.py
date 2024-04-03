@@ -2,7 +2,7 @@ from PyQt5.QtCore import QEvent, QSize, Qt, QVariantAnimation, QRect, QPoint, QS
 from PyQt5.QtWidgets import QToolButton, QWidget, QAction
 from PyQt5.QtGui import QIcon, QMouseEvent, QPaintEvent, QPainter, QColor, QPixmap, QBrush, QImage
 from multipledispatch import dispatch
-import paths
+from paths import MyIcon
 from customWidget.ripple_animation import RippleAnimation
 
 
@@ -14,7 +14,7 @@ class IconButton(QToolButton):
         #self.test_img = QIcon(paths.IMAGE_DIR + '/Link_Icon.png')
         self.setFixedSize(size)
         self.icon_size = size - QSize(2, 2)
-        self.pixmap = QPixmap(paths.IMAGE_DIR + '/Link_Icon.png').scaled(self.icon_size, aspectRatioMode=Qt.AspectRatioMode.KeepAspectRatioByExpanding, transformMode=Qt.TransformationMode.SmoothTransformation)
+        self.pixmap = QPixmap(MyIcon.LINK_ICON).scaled(self.icon_size, aspectRatioMode=Qt.AspectRatioMode.KeepAspectRatioByExpanding, transformMode=Qt.TransformationMode.SmoothTransformation)
         self.alpha = 0
         self.hover_pixmap = self.pixmap
         self.result_pixmap = self.pixmap

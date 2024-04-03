@@ -2,12 +2,9 @@
 from PyQt5 import QtGui
 from PyQt5.QtCore import QSize, Qt
 from PyQt5.QtWidgets import QLabel, QWidget
-import paths
+from paths import MyIcon
 
 class Loading_Label(QLabel):
-    
-    loading_icon = paths.IMAGE_DIR + '/loading_spin.gif'
-
     def __init__(self, parent: QWidget) -> None:
         super().__init__(parent)
 
@@ -15,12 +12,11 @@ class Loading_Label(QLabel):
         palette.setColor(palette.ColorRole.Background, Qt.GlobalColor.transparent)
         self.setPalette(palette)
         self.setFixedSize(QSize(35, 35))
-        self.loading = QtGui.QMovie(self.loading_icon)
+        self.loading = QtGui.QMovie(MyIcon.LOADING_ICON)
         self.loading.setScaledSize(QSize(35, 35))
         self.setMovie(self.loading)
         self.hide()
-
-
+        
     def start(self):
         self.show()
         self.loading.start()

@@ -5,7 +5,7 @@ from PyQt5.QtWidgets import QWidget, QLabel, QSizePolicy
 from PyQt5.QtGui import QPainter, QColor
 import threading
 from multipledispatch import dispatch
-import paths
+from paths import MyIcon
 
 class CustomProgressBar(QWidget):
 
@@ -25,7 +25,7 @@ class CustomProgressBar(QWidget):
         self.chunk_color = chunk_color
         self.is_percent = is_percent
         self.text_color = text_color
-        self.movie = QtGui.QMovie(paths.IMAGE_DIR + '/loading_spin.gif')
+        self.movie = QtGui.QMovie(MyIcon.LOADING_ICON)
         self.movie.setScaledSize(QSize(30, 30))
         self.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Ignored)
         self.la = QLabel(self)

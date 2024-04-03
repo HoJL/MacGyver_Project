@@ -1,12 +1,15 @@
 import sys
-from PyQt5.QtGui import QPaintEvent
+from PyQt5.QtGui import QCloseEvent, QPaintEvent
 from PyQt5.QtWidgets import *
 from PyQt5.QtGui import *
 from PyQt5.QtCore import *
 from translator import Translator
 from customWidget import *
 import paths
+from paths import MyIcon
 import downloading
+import save_load
+import threading
 #기본적으로 png이미지를 불러올때 pyqt ICC 프로파일에 맞지않는 경우가 많음
 #color 즉 sRGB 프로파일 문제일 확률이 높음
 #해결방법: 포토샵에서 웹용으로 저장을 선택하여 png-8을 선택하고 저장하면 해결
@@ -16,8 +19,8 @@ class MainWindow(QMainWindow):
 
     WIN_W = 540
     WIN_H = 600
-    exit_imgage = paths.BASE_DIR + '/images/Exit_Icon.png'
-    win_icon = paths.BASE_DIR + '/images/말랑곰.png'
+    # exit_imgage = paths.BASE_DIR + '/images/Exit_Icon.png'
+    # win_icon = paths.BASE_DIR + '/images/말랑곰.png'
     sig = pyqtSignal()
     def __init__(self, app: QApplication) -> None:
         super().__init__()
@@ -28,9 +31,9 @@ class MainWindow(QMainWindow):
         self.setMinimumSize(450, 400)
         self.MoveWinCenter()
         self.setWindowTitle("CB")
-        self.setWindowIcon(QIcon(self.win_icon))
+        self.setWindowIcon(QIcon(MyIcon.WIN_ICON))
 
-        self.exitAction = QAction(QIcon(self.exit_imgage), 'Exit', self)
+        self.exitAction = QAction(QIcon(MyIcon.EXIT_ICON), 'Exit', self)
         self.exitAction.setShortcut('Alt+F4')
         self.exitAction.triggered.connect(qApp.quit)
         self.setFocusPolicy(Qt.FocusPolicy.NoFocus)
@@ -107,6 +110,8 @@ class MainWindow(QMainWindow):
         self.show()
         self.retranslateUi()
 
+        save_load.load(self.listView)
+
     def MoveWinCenter(self):
         '''창을 모니터 중앙으로 위치하게 하는 함수
         '''
@@ -135,6 +140,9 @@ class MainWindow(QMainWindow):
         
         down = downloading.Downloading(di, self.listView)
         down.start()
+    
+    def closeEvent(self, a0: QCloseEvent | None) -> None:
+        save_load.save(self.listView)
 
 import ctypes
 import os
@@ -143,7 +151,7 @@ if __name__ == '__main__':
     app = QApplication(sys.argv)
     # myappid = u'mycompany.myproduct.subproduct.version' # arbitrary string
     # ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(myappid)
-    ic = paths.BASE_DIR + '/images/말랑곰.png'
+    ic = MyIcon.WIN_ICON
     app_icon = QIcon()
     app_icon.addFile(ic, QSize(16,16))
     app_icon.addFile(ic, QSize(24,24))
