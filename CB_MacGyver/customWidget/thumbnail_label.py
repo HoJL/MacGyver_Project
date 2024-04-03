@@ -56,7 +56,7 @@ class ThumbnailLabel(QLabel):
         return self.rounded_image_by_pixmap(image)
     
     def rounded_image_by_pixmap(self, pixmap: QPixmap):
-        image = pixmap
+        image = pixmap.scaled(self.overlayX, self.overlayY, aspectRatioMode=Qt.AspectRatioMode.KeepAspectRatioByExpanding, transformMode=Qt.TransformationMode.SmoothTransformation)
         out_img = QPixmap(image.width(), image.height())
         out_img.fill(Qt.GlobalColor.transparent)
         painter = QPainter(out_img)
@@ -113,10 +113,12 @@ class ThumbnailLabel(QLabel):
     def enterEvent(self, a0: QEvent | None) -> None:
         self.isEnter = True
         self.zoom_signal.emit(1)
+        self.update()
 
     def leaveEvent(self, a0: QEvent | None) -> None:
         self.isEnter = False
         self.zoom_signal.emit(0)
+        self.update()
         
     def mouseMoveEvent(self, ev: QMouseEvent | None) -> None:
         self.mouseX = ev.globalX()
