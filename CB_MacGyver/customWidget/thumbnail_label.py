@@ -12,7 +12,8 @@ class ThumbnailLabel(QLabel):
     pix = None
     __gap = 5
     thumb_base: QPixmap = None
-    
+    thumb_small: QPixmap = None
+
     def __init__(self, size: QSize, pixmapUrl: str, parent, state = type.State.Normal):
         super().__init__(parent)
 

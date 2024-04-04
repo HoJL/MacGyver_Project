@@ -17,6 +17,7 @@ class State(Enum):
 @dataclass
 class DownloadInfo:
     url: str = None
+    name: str = None
     type: str = None
     state: State = State.Normal
     error_code :str = None
@@ -28,4 +29,4 @@ class DownloadInfo:
 class MetaData:
     size: int = 0
     length: str = None
-    ext:str = None
+    codec:str = None

@@ -17,6 +17,7 @@ from customWidget.myLabel import MyLabel
 from customWidget.panel_buttons import PanelButtons
 from enum import Enum
 from customWidget.myMenu import MyMenu
+from customWidget.iconbutton import IconButton
 from paths import MyIcon
 class Download_Panel(QWidget):
     
@@ -47,6 +48,10 @@ class Download_Panel(QWidget):
 
         self._init_menu()
         self._init_panel_widget()
+        # qm = QMessageBox()
+        # qm.addButton('예', QMessageBox.ButtonRole.YesRole)
+        # qm.addButton('아니오', QMessageBox.ButtonRole.RejectRole)
+        # qm.exec_()
 
     def _init_menu(self):
         self.my_menu = MyMenu(self)
@@ -193,6 +198,7 @@ class Download_Panel(QWidget):
             self.type_icon.setIcon(QIcon(icon))
             self.type_icon.released.connect(self.__open_web)
             self.thumbnail.setLoading(True)
+            self.title.setText(self.info.name)
             self.empty.hide()
 
         if self.info.state is type.State.Done:

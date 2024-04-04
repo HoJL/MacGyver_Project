@@ -112,6 +112,7 @@ class Download_M3u8(Downloader):
         tmpdir = paths.BASE_DIR + '/tmp_' + date_str
         file += date_str + '.mp4'
         self.dp.setTitle(file)
+        self.info.name = file
         forder_dir = os.getcwd()
         forder_dir += '/M3U8_Download/'
         if os.path.isdir(forder_dir) is False:

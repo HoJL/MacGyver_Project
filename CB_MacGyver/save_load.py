@@ -18,10 +18,6 @@ def save(listwidget: QListWidget):
             #DownloadInfo class
 
         dp = return_download_panel_obj(listwidget.itemWidget(item))
-        #dp: Download_Panel = listwidget.itemWidget(item)
-        title_txt = dp.title.txt
-        setting.setValue('Downloaded/%d.title'% cnt, title_txt)
-        tumb_pixmap: QPixmap = dp.thumbnail.thumb_base
         pix = dp.thumbnail.splash.pixmap()
         setting.setValue('Downloaded/%d.pixmap'% cnt, pix)
         di = dp.info

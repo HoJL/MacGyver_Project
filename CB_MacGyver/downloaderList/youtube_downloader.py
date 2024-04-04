@@ -62,6 +62,7 @@ class Download_Youtube(Downloader):
         if self.isStart is False:
             self.isStart = True
             self.dp.setTitle(d['info_dict']['title'])
+            self.info.name = d['info_dict']['title']
             self.dp.progress.setTotal(d['total_bytes'])
             self.dp.progress.setValue(0)
 

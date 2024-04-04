@@ -72,7 +72,7 @@ class CustomLineEdit(QLineEdit):
         self.button.setPixmap(MyIcon.LINK_ICON)
     
     def getCurrentTypeAndUrl(self) -> DownloadInfo:
-        di = DownloadInfo(self.cur_url, self.cur_type)
+        di = DownloadInfo(url=self.cur_url, type=self.cur_type)
         if self.cur_type == None:
             di.state = type.State.Error
         
