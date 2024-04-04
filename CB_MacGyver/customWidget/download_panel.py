@@ -16,6 +16,8 @@ from functools import partial
 from customWidget.myLabel import MyLabel
 from customWidget.panel_buttons import PanelButtons
 from enum import Enum
+from customWidget.myMenu import MyMenu
+from paths import MyIcon
 class Download_Panel(QWidget):
     
     _height = 80
@@ -24,10 +26,6 @@ class Download_Panel(QWidget):
     item_index = -1
     _file_path: str = None
     _forder_dir: str = None
-
-    class MyStyle(QProxyStyle):
-        def pixelMetric(self, metric: QStyle.PixelMetric, option: QStyleOption | None = ..., widget: QWidget | None = ...) -> int:
-            return 22
 
     def __init__(self, parent, info: DownloadInfo) -> None:
 
@@ -39,7 +37,7 @@ class Download_Panel(QWidget):
         self.setFixedHeight(self._height)
         self.setLayout(self._layout)
         self.info = info
-        
+
         self.setFocusPolicy(Qt.FocusPolicy.NoFocus)
         self.back_color = QColor(255, 255, 255)
         front_color = QColor(100, 100, 200)
@@ -47,6 +45,26 @@ class Download_Panel(QWidget):
         self.setAttribute(Qt.WidgetAttribute.WA_StyledBackground)
         self.update_state_color()
 
+        self._init_menu()
+        self._init_panel_widget()
+
+    def _init_menu(self):
+        self.my_menu = MyMenu(self)
+        self.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
+        self.customContextMenuRequested.connect(self.customContextMenuSlot)
+        open_action = QAction(QIcon(MyIcon.FORDER_ICON), self.tr('Open'), self)
+        open_action.triggered.connect(self.__open_forder)
+        del_action = QAction(QIcon(MyIcon.DELETE_ICON), self.tr('Delete'), self)
+        del_action.triggered.connect(self.__del_all)
+        remove_action = QAction(QIcon(MyIcon.REMOVE_ICON), self.tr('Remove'), self)
+        remove_action.triggered.connect(self.__del_widget)
+        self.my_menu.addActions([open_action, del_action, remove_action])
+        self.my_menu.addSeparator()
+
+    def customContextMenuSlot(self, pos):
+        self.my_menu.popup(QtGui.QCursor.pos())
+
+    def _init_panel_widget(self):
         #=========================================
         #∥       ∥ title
         #∥ thumb ∥ -------------------------------
@@ -77,7 +95,7 @@ class Download_Panel(QWidget):
         self.title.setFixedHeight((int)(self._height/2))
         self.title.setStyleSheet('border: 0; background-color: rgba(255, 0, 255, 0);')
         self._top_layout.addWidget(self.title)
-        
+
         #Panel Button
         self.pbt = PanelButtons(self)
         self._top_layout.addWidget(self.pbt)
@@ -85,7 +103,7 @@ class Download_Panel(QWidget):
         self.pbt.add_list_del_btn_action(self.__del_widget)
         self.pbt.add_file_del_btn_action(self.__del_all)
         self.pbt.add_open_file_btn_action(self.__open_forder)
-     
+
         self._bottom_layout = QHBoxLayout()
         self._bottom_layout.setSpacing(1)
         self._bottom_layout.setContentsMargins(0, 0, 0, 0)
@@ -122,7 +140,7 @@ class Download_Panel(QWidget):
         self.empty.hide()
         self.empty.setStyleSheet('border: 0; background-color: rgba(255, 255, 255, 0);')
         self._bottom_layout.addWidget(self.empty)
-    
+
     def enterEvent(self, e: QtCore.QEvent | None) -> None:
         self.pbt.show()
 

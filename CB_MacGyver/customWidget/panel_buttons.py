@@ -13,8 +13,8 @@ class PanelButtons(QWidget):
         self.setLayout(self.button_layout)
         
         folder_img_url = MyIcon.FORDER_ICON
-        file_del_url = MyIcon.TRASH_ICON
-        list_del_url = MyIcon.DELETE_ICON
+        file_del_url = MyIcon.DELETE_ICON
+        list_del_url = MyIcon.REMOVE_ICON
 
         self.open_file_location_btn = self.__create_button(folder_img_url)
         self.open_file_location_btn.set_pixmap_hover_color(QColor(0, 0, 0))
