@@ -1,7 +1,7 @@
 from PyQt5 import QtCore, QtGui
 from PyQt5.QtCore import Qt, QSize, QTimer, QFile
 from PyQt5.QtWidgets import *
-from PyQt5.QtGui import QColor, QIcon, QPixmap, QFontMetrics
+from PyQt5.QtGui import QColor, QIcon, QPixmap, QFontMetrics, QKeySequence
 import threading
 
 from PyQt5.QtWidgets import QStyle, QStyleOption, QWidget
@@ -38,6 +38,7 @@ class Download_Panel(QWidget):
         self.setFixedHeight(self._height)
         self.setLayout(self._layout)
         self.info = info
+        self.setObjectName('Panel')
 
         self.setFocusPolicy(Qt.FocusPolicy.NoFocus)
         self.back_color = QColor(255, 255, 255)
@@ -48,21 +49,17 @@ class Download_Panel(QWidget):
 
         self._init_menu()
         self._init_panel_widget()
-        # qm = QMessageBox()
-        # qm.addButton('예', QMessageBox.ButtonRole.YesRole)
-        # qm.addButton('아니오', QMessageBox.ButtonRole.RejectRole)
-        # qm.exec_()
 
     def _init_menu(self):
         self.my_menu = MyMenu(self)
         self.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
         self.customContextMenuRequested.connect(self.customContextMenuSlot)
-        open_action = QAction(QIcon(MyIcon.FORDER_ICON), self.tr('Open'), self)
+        open_action = QAction(QIcon(MyIcon.FORDER_ICON), self.tr('Forder Open'), self)
         open_action.triggered.connect(self.__open_forder)
-        del_action = QAction(QIcon(MyIcon.DELETE_ICON), self.tr('Delete'), self)
-        del_action.triggered.connect(self.__del_all)
-        remove_action = QAction(QIcon(MyIcon.REMOVE_ICON), self.tr('Remove'), self)
-        remove_action.triggered.connect(self.__del_widget)
+        del_action = QAction(QIcon(MyIcon.DELETE_ICON), self.tr('Delete File'), self)
+        del_action.triggered.connect(self.__delete_file)
+        remove_action = QAction(QIcon(MyIcon.REMOVE_ICON), self.tr('Remove from list'), self)
+        remove_action.triggered.connect(self.__delete_list)
         self.my_menu.addActions([open_action, del_action, remove_action])
         self.my_menu.addSeparator()
 
@@ -97,16 +94,17 @@ class Download_Panel(QWidget):
 
         #Title
         self.title = MyLabel(self)
+        self.title.setObjectName('Title')
         self.title.setFixedHeight((int)(self._height/2))
-        self.title.setStyleSheet('border: 0; background-color: rgba(255, 0, 255, 0);')
+        self.title.setStyleSheet('#Title{border: 0; background-color: rgba(255, 0, 255, 0);}')
         self._top_layout.addWidget(self.title)
 
         #Panel Button
         self.pbt = PanelButtons(self)
         self._top_layout.addWidget(self.pbt)
         self.pbt.hide()
-        self.pbt.add_list_del_btn_action(self.__del_widget)
-        self.pbt.add_file_del_btn_action(self.__del_all)
+        self.pbt.add_list_del_btn_action(self.__delete_list)
+        self.pbt.add_file_del_btn_action(self.__delete_file)
         self.pbt.add_open_file_btn_action(self.__open_forder)
 
         self._bottom_layout = QHBoxLayout()
@@ -118,9 +116,10 @@ class Download_Panel(QWidget):
         self.type_icon = QPushButton(self)
         # icon = type.icon_list[self.info.type]
         icon_size = QSize(25, 25)
+        self.type_icon.setObjectName('Type_Icon')
         self.type_icon.setFixedSize(icon_size)
         self.type_icon.setIconSize(icon_size)
-        self.type_icon.setStyleSheet('border: 0; background-color: rgba(255, 255, 255, 0);')
+        self.type_icon.setStyleSheet('#Type_Icon{border: 0; background-color: rgba(255, 255, 255, 0);}')
         self.type_icon.setCursor(Qt.CursorShape.PointingHandCursor)
         self._bottom_layout.addWidget(self.type_icon)
 
@@ -131,7 +130,8 @@ class Download_Panel(QWidget):
 
         #Time
         self.time_widget = QLabel(self)
-        self.time_widget.setStyleSheet('border: 0; background-color: rgba(255, 255, 255, 0);')
+        self.time_widget.setObjectName('Time')
+        self.time_widget.setStyleSheet('#Time{border: 0; background-color: rgba(255, 255, 255, 0);}')
         self.time_str = '00:00'
         self.time_widget.setText(self.time_str)
         self.time = 0
@@ -141,9 +141,9 @@ class Download_Panel(QWidget):
 
         #temp space
         self.empty = QLabel(self)
-        self.empty.setObjectName('empty')
+        self.empty.setObjectName('Empty')
         self.empty.hide()
-        self.empty.setStyleSheet('border: 0; background-color: rgba(255, 255, 255, 0);')
+        self.empty.setStyleSheet('#Empty{border: 0; background-color: rgba(255, 255, 255, 0);}')
         self._bottom_layout.addWidget(self.empty)
 
     def enterEvent(self, e: QtCore.QEvent | None) -> None:
@@ -167,7 +167,7 @@ class Download_Panel(QWidget):
         rgb = '{}, {}, {}, {}'.format(back_color.red(), back_color.green(), back_color.blue(), 0.6)
        
         self.setStyleSheet("""
-                QWidget{
+                QWidget#Panel{
                     background-color: rgba(%s);
                     border-width: 0.5px;
                     border-style: solid;
@@ -218,7 +218,6 @@ class Download_Panel(QWidget):
     def __del_widget(self):
         idx = self.list_view.indexFromItem(self.item).row()
         item = self.list_view.takeItem(idx)
-
         del item
 
     def __del_file(self):
@@ -228,10 +227,56 @@ class Download_Panel(QWidget):
             QFile.moveToTrash(self.info.file_path)
         except:
             pass
+    
+    def __delete_list(self):
+        text = self.tr('Are you sure you want to delete this task from the list?')
+        if self.__pop_message_box(self.tr('Delete List'), text) is False:
+            return
+        self.__del_widget()
 
-    def __del_all(self):
+    def __delete_file(self):
+        text = self.tr('Are you sure you want to delete this file?')
+        if self.__pop_message_box(self.tr('Delete File'), text) is False:
+            return
         self.__del_file()
         self.__del_widget()
+
+    def __pop_message_box(self, title, text:str = ''):
+        qm = QMessageBox(self)
+        qm.setTextFormat(Qt.TextFormat.RichText)
+        qm.setIcon(QMessageBox.Icon.Warning)
+        qm.setWindowTitle(title)
+        qm.setText(text + '<br><br>' + '<font color="red">%s</font>'% self.title.txt)
+        yes_btn = qm.addButton(self.tr('&Yes'), QMessageBox.ButtonRole.YesRole)
+        yes_btn.setShortcut(QKeySequence(Qt.Key.Key_Y))
+        no_btn = qm.addButton(self.tr('&No'), QMessageBox.ButtonRole.NoRole)
+        no_btn.setShortcut(QKeySequence(Qt.Key.Key_N))
+        qm.setDefaultButton(yes_btn)
+        
+        reply = qm.exec_()
+
+        if reply == 0:
+            return True
+        else:
+            return False
+        # ret = qm.warning(self, title, text + '<br><br>' + '<font color="red">%s</font>'% self.title.txt, buttons=QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No, defaultButton=QMessageBox.StandardButton.Yes)
+        ret = QMessageBox.warning(self, title, text, buttons=QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No, defaultButton=QMessageBox.StandardButton.Yes)
+        
+        # if ret == QMessageBox.StandardButton.Yes:
+        #     return True
+        # else:
+        #     return False
+        # qm = QMessageBox(self)
+        # qm.setWindowTitle(title)
+        # qm.addButton(self.tr('Yes'), QMessageBox.ButtonRole.YesRole)
+        # qm.addButton(self.tr('No'), QMessageBox.ButtonRole.NoRole)
+        
+        # reply = qm.exec_()
+
+        # if reply == 0:
+        #     return True
+        # else:
+        #     return False
 
     def __open_forder(self):
         if self.info.dir is None:
