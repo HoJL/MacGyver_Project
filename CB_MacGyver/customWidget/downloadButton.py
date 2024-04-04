@@ -46,12 +46,13 @@ class DownloadButton(customWidget.iconbutton.IconButton):
         #self.baseColor = "rgb(184, 20, 20)"
         #self.pressedColor = "rgb(160, 20, 20)"
         #self.clicked.connect(self.__pressClick)
+        self.setObjectName('DownloadBtn')
         self.setStyleSheet("""
-            QToolButton {
+            QToolButton#DownloadBtn {
                 padding: 0px;
                 border-width: 0px;
             }
-            QToolButton:menu-button{
+            QToolButton:menu-button#DownloadBtn {
                 width: 20px;
                 height: 32px;
             }

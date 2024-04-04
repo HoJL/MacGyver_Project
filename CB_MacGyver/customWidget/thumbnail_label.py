@@ -18,8 +18,9 @@ class ThumbnailLabel(QLabel):
         super().__init__(parent)
 
         self.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self.setObjectName('Thumbnail')
         self.setStyleSheet("""
-                QLabel{
+                QLabel#Thumbnail{
                         background-color: rgba(222, 222, 222, 0);
                         border-width: 0px;
                         border-radius: 10px;
@@ -45,7 +46,8 @@ class ThumbnailLabel(QLabel):
 
         self.splash = QLabel(self, Qt.WindowType.WindowStaysOnTopHint | Qt.WindowType.SplashScreen | Qt.WindowType.FramelessWindowHint )
         self.splash.setAttribute(Qt.WidgetAttribute.WA_TranslucentBackground)
-        self.splash.setStyleSheet('border-radius: 10px;')
+        self.splash.setObjectName('Splash')
+        self.splash.setStyleSheet('#Splash{border-radius: 10px;}')
         self.splash.setWindowOpacity(0)
         self.splash.hide()
         self.zoom_signal.connect(self.zoom_slot)

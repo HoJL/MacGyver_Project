@@ -26,18 +26,19 @@ class CustomLineEdit(QLineEdit):
         self.setFocusPolicy(Qt.FocusPolicy.ClickFocus)
         self.setPlaceholderText(self.tr('Enter URL'))
         #self.setStyleSheet('QLineEdit {padding-left: %dpx;}' )
+        self.setObjectName('CustomEdit')
         self.setStyleSheet("""
-            QLineEdit {
+            QLineEdit#CustomEdit {
                 padding-left: %dpx;
                 border-style: solid;
                 border-width: 1px;
                 border-color: rgb(200, 200, 200);
                 border-radius: 4px;
             }
-            QLineEdit:hover {
+            QLineEdit:hover#CustomEdit {
                 border-color: rgb(200, 0, 0);
             }
-            QLineEdit:focus {
+            QLineEdit:focus#CustomEdit {
                 border-width: 1.5px;
                 border-color: rgb(200, 0, 0);
             }

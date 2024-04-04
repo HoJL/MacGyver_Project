@@ -54,10 +54,12 @@ class MainWindow(QMainWindow):
 
         self.contentGrid = QGridLayout()
         self.content = QWidget(self)
-        self.content.setStyleSheet('background-color: rgb(255, 255, 255);')
+        self.content.setObjectName('Content')
+        self.content.setStyleSheet('#Content{background-color: rgb(255, 255, 255);}')
 
         scroll_area = QScrollArea()
-        scroll_area.setStyleSheet('border: 0px;')
+        scroll_area.setObjectName('Scroll_Area')
+        scroll_area.setStyleSheet('#Scroll_Area{border: 0px;}')
         scroll_area.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
         scroll_area.setVerticalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
         rt = self.content.geometry()
@@ -70,6 +72,7 @@ class MainWindow(QMainWindow):
         self.ly.setContentsMargins(0, 0, 0, 0)
 
         self.listView = QListWidget(self)
+        self.listView.setObjectName('ListView')
         self.listView.setSelectionMode(QAbstractItemView.SelectionMode.ExtendedSelection)
         self.listView.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
         # self.listView.setStyleSheet("""
@@ -90,7 +93,8 @@ class MainWindow(QMainWindow):
         self.contentGrid.addWidget(scroll_area, 0, 0, 1, 0)
 
         self.status = QWidget(self)
-        self.status.setStyleSheet('background-color: rgb(222, 222, 222);')
+        self.status.setObjectName('Status')
+        self.status.setStyleSheet('#Status{background-color: rgb(222, 222, 222);}')
         self.status.setFixedHeight(64)
         status_layout = QGridLayout()
         status_layout.addWidget(self.status, 0, 0, 1, 0)
@@ -157,7 +161,7 @@ if __name__ == '__main__':
     app_icon.addFile(ic, QSize(48,48))
     app_icon.addFile(ic, QSize(256,256))
     app.setWindowIcon(app_icon)
-
+    # app.setStyle(QStyleFactory.create('fusion'))
     trPath = paths.BASE_DIR + '/qt5_ko_kr.qm'
     trr = Translator(app, trPath)
     main = MainWindow(app)
