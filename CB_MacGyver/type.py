@@ -27,6 +27,6 @@ class DownloadInfo:
 
 @dataclass
 class MetaData:
-    size: int = 0
-    length: str = None
-    codec:str = None
+    size: float = 0
+    length: int = 0
+    codec: str = None

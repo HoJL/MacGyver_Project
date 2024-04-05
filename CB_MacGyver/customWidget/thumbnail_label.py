@@ -158,7 +158,7 @@ class ThumbnailLabel(QLabel):
             pix_height = self.thumb_base.height()
             thumb = self.thumb_base
 
-            if self.isEnter is False:
+            if self.isEnter is False and self.thumb_small is not None:
                 left = self.__gap
                 top = self.__gap
                 width -= self.__gap * 2

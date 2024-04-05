@@ -59,7 +59,8 @@ class Downloading(threading.Thread):
         except Exception as e:
             dp.info.state = State.Error
             dp.info.error_code = e.__str__()
-        finally: 
+        finally:
+            dp.set_metadata(re.metadata)
             dp.update_state_color()
             dp.update_state()
 

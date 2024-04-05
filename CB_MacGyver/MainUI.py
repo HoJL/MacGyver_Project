@@ -164,6 +164,9 @@ if __name__ == '__main__':
     # app.setStyle(QStyleFactory.create('fusion'))
     trPath = paths.BASE_DIR + '/qt5_ko_kr.qm'
     trr = Translator(app, trPath)
+    fontDB = QFontDatabase()
+    fontDB.addApplicationFont('D:/MacGyver_Project/CB_MacGyver/font/HakgyoansimBareondotumB.ttf')
+    app.setFont(QFont('학교안심 바른돋움 B', 11))
     main = MainWindow(app)
 
     sys.exit(app.exec_())

@@ -11,13 +11,14 @@ import os
 import paths
 import webbrowser
 import type
-from type import DownloadInfo
+from type import DownloadInfo, MetaData
 from functools import partial
 from customWidget.myLabel import MyLabel
 from customWidget.panel_buttons import PanelButtons
 from enum import Enum
 from customWidget.myMenu import MyMenu
 from customWidget.iconbutton import IconButton
+from customWidget.metaLabel import MetaLabel
 from paths import MyIcon
 class Download_Panel(QWidget):
     
@@ -27,7 +28,7 @@ class Download_Panel(QWidget):
     item_index = -1
     _file_path: str = None
     _forder_dir: str = None
-
+    metadata: MetaData = None
     def __init__(self, parent, info: DownloadInfo) -> None:
 
         super().__init__(parent)
@@ -139,6 +140,11 @@ class Download_Panel(QWidget):
         self.time_widget.setContentsMargins(5, 0, 5, 0)
         self._bottom_layout.addWidget(self.time_widget)
 
+        #mate label
+        self.meta = MetaLabel(self)
+        self._bottom_layout.addWidget(self.meta)
+        self.meta.hide()
+
         #temp space
         self.empty = QLabel(self)
         self.empty.setObjectName('Empty')
@@ -203,17 +209,41 @@ class Download_Panel(QWidget):
 
         if self.info.state is type.State.Done:
             self.time_widget.hide()
+            if self.metadata is not None:
+                self.meta.show()
+                time_str = self.__time_format(self.metadata.length)
+                self.meta.setTimeText(time_str)
+                size_str = self.__size_format(self.metadata.size)
+                self.meta.setSizeText(size_str)
             self.thumbnail.setLoading(False)
+
+    def set_metadata(self, meta: MetaData):
+        self.metadata = meta
 
     def _timer(self):
         self.time += 1
-        m, s = divmod(self.time, 60)
-        self.time_str = '{:02d}:{:02d}'.format(m, s)
+        self.time_str = self.__time_format(self.time)
+        self.time_widget.setText(self.time_str)
+
+    def __time_format(self, time):
+        m, s = divmod(time, 60)
+        time_str = '{:02d}:{:02d}'.format(m, s)
         if (m > 60):
             h, m = divmod(m, 60)
-            self.time_str = '{:02d}:{:02d}:{:02d}'.format(h, m, s)
-        
-        self.time_widget.setText(self.time_str)
+            time_str = '{:02d}:{:02d}:{:02d}'.format(h, m, s)
+
+        return time_str
+
+    def __size_format(self, size):
+        div = 1024
+        k = size / div
+        m = k / div
+        size_str = '{:.1f}MB'.format(m)
+        if m > div:
+            g = m / div
+            size_str = '{:.1f}GB'.format(g)
+
+        return size_str
 
     def __del_widget(self):
         idx = self.list_view.indexFromItem(self.item).row()

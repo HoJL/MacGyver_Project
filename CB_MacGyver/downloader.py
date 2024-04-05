@@ -26,7 +26,7 @@ class Video:
 
     def __init__(self, info: DownloadInfo) -> None:
         self.info = info
-        meta_cmd = 'ffprobe -v error -show_entries stream=codec_long_name:format=duration:format=size -of default=noprint_wrappers=1 -i ' + self.info.file_path
+        meta_cmd = 'ffprobe -v error -show_entries stream=codec_long_name:format=duration:format=size -of default=noprint_wrappers=1 -i ' + '\"' + self.info.file_path + '\"'
         p = subprocess.Popen(meta_cmd, shell=True, stdout=subprocess.PIPE,
                                 stderr=subprocess.PIPE)
         
@@ -44,5 +44,5 @@ class Video:
 
         self.metadata = MetaData()
         self.metadata.codec = meta_dict[key_list[0]]
-        self.metadata.length = meta_dict[key_list[1]]
-        self.metadata.size = meta_dict[key_list[2]]
+        self.metadata.length = int(float(meta_dict[key_list[1]]))
+        self.metadata.size = float(meta_dict[key_list[2]])

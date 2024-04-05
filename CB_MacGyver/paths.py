@@ -19,3 +19,5 @@ class MyIcon():
     REMOVE_ICON = a('/remove_icon.png')
     DOWNLOAD_ICON = a('/Download_Icon.png')
     MENU_ARROW_ICON = a('/down_arrow.png')
+    TIME_ICON = a('/time_icon.png')
+    DISK_ICON = a('/disk_icon.png')

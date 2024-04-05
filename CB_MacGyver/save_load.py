@@ -22,6 +22,8 @@ def save(listwidget: QListWidget):
         setting.setValue('Downloaded/%d.pixmap'% cnt, pix)
         di = dp.info
         setting.setValue('Downloaded/%d.info'% cnt, di)
+        meta = dp.metadata
+        setting.setValue('Downloaded/%d.meta'% cnt, meta)
         cnt += 1
 
 def return_download_panel_obj(obj) -> Download_Panel:
@@ -41,6 +43,8 @@ def load(listwidget: QListWidget):
         listwidget.insertItem(0, item)
         listwidget.setItemWidget(item, dw.dp)
         dw.dp.set_item(item)
+        meta = setting.value('Downloaded/%d.meta'% idx)
+        dw.dp.set_metadata(meta)
         dw.dp.update_state()
         pixmap = setting.value('Downloaded/%d.pixmap'% idx)
         dw.dp.thumbnail.set_thumb_pixmap_by_load(pixmap)
