@@ -1,4 +1,4 @@
-from customWidget.customEdit import CustomLineEdit
+from customWidget.custom_icon_edit import CustomLineEdit
 from customWidget.downloadButton import DownloadButton
 from customWidget.download_panel import Download_Panel
 from customWidget.custom_progress_bar import CustomProgressBar
