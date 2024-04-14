@@ -60,7 +60,8 @@ class Downloading(threading.Thread):
             dp.info.state = State.Error
             dp.info.error_code = e.__str__()
         finally:
-            dp.set_metadata(re.metadata)
+            if re is not None:
+                dp.set_metadata(re.metadata)
             dp.update_state_color()
             dp.update_state()
 
