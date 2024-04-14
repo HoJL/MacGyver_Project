@@ -30,13 +30,17 @@ class MyMenu(QMenu):
                     border-radius: 4px;
                 }
                 QMenu::item#MyMenu {
-                    spacing: 0px;
                     height: 30px;
                     width: 200px;
+                    padding-left: 5px;
+                    padding-right: 5px;
                 }
                 QMenu::item:selected#MyMenu {
                     background-color: rgb(180, 200, 200);
                     border-radius: 4px;
+                }
+                QMenu::icon {
+                    padding-left: 5px;
                 }
         """)
 

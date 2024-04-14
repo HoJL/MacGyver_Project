@@ -44,7 +44,7 @@ class MainWindow(QMainWindow):
 
         downloadGrid = QGridLayout()
         
-        self.edit = CustomLineEdit(self)
+        self.edit = CustomIconEdit(self)
         bt = DownloadButton(self.edit, self)
         downloadGrid.addWidget(self.edit, 0, 0)
         downloadGrid.addWidget(bt, 0, 1)
@@ -111,7 +111,7 @@ class MainWindow(QMainWindow):
         self.sig.connect(self.start_download)
         self.show()
         self.retranslateUi()
-
+        
         save_load.load(self.listView)
 
     def MoveWinCenter(self):
@@ -125,7 +125,6 @@ class MainWindow(QMainWindow):
     def retranslateUi(self):
         '''언어팩에 따른 UI언어번역
         '''
-        tr = QCoreApplication.translate
         self.exitAction.setText(self.tr('Exit'))
         self.exitAction.setStatusTip(self.tr('Exit'))
         self.tasks.setTitle(self.tr('Tasks'))
