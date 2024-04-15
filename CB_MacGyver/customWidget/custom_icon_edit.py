@@ -24,27 +24,7 @@ class CustomIconEdit(CustomLineEdit):
         font = self.font()
         font.setPixelSize(15)
         self.setFont(font)
-        # self.setFocusPolicy(Qt.FocusPolicy.ClickFocus)
         self.setPlaceholderText(self.tr('Enter URL'))
-        #self.setStyleSheet('QLineEdit {padding-left: %dpx;}' )
-        # self.setObjectName('CustomEdit')
-        # self.setStyleSheet("""
-        #     QLineEdit#CustomEdit {
-        #         padding-left: %dpx;
-        #         border-style: solid;
-        #         border-width: 1px;
-        #         border-color: rgb(200, 200, 200);
-        #         border-radius: 4px;
-        #     }
-        #     QLineEdit:hover#CustomEdit {
-        #         border-color: rgb(200, 0, 0);
-        #     }
-        #     QLineEdit:focus#CustomEdit {
-        #         border-width: 1.5px;
-        #         border-color: rgb(200, 0, 0);
-        #     }
-        #     """ %(buttonSize.width() + frameWidth + 4)
-        # )
         self.setStyleSheet(self.styleSheet() + """
             QLineEdit#CustomEdit {
                 padding-left: %dpx;
