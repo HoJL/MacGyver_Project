@@ -59,5 +59,51 @@ QListWidget 사용시 insertItem 적용되지 않고 addItem과 똑같이 동작
   - #### 해결방법
     > 시작 `signal`과 중지`signal`을 선언하고 동작을 연결시킨다음 실제로 시작과 중지를 하는곳에는 'signal'을 'emit'하기만 하면 된다.
 
-    > >  `signal`로 동작이 되는 이유는 파이썬에서 `signal`은 항상 Main스레드에서만 동작하기 때문이다. 그래서 `signal`이 `emit`를 하여 함수를 실행시키면 함수는 Main스레드에서 실행되고 다시 해당 스레드로 돌아온다. 주의사항은 스레드에서 **Main스레드를 블락시키는 행동을 하면 동작을 하지 않는다는 점이다.** 그래서 `with` 이나 `thread.join` 과 같은 행동을 할때는 사용을 유의하여야한다. 
-     
+    > >  `signal`로 동작이 되는 이유는 파이썬에서 `signal`은 항상 Main스레드에서만 동작하기 때문이다. 그래서 `signal`이 `emit`를 하여 함수를 실행시키면 함수는 Main스레드에서 실행되고 다시 해당 스레드로 돌아온다. 주의사항은 스레드에서 **Main스레드를 블락시키는 행동을 하면 동작을 하지 않는다는 점이다.** 그래서 `with` 이나 `thread.join` 과 같은 행동을 할때는 사용을 유의하여야한다.
+
+
+## 5. QObject.tr()(self.tr()) 사용시 번역이 되지않는 문제
+이 문제는 부모클래스에서 self.tr을 사용이 발생하는 문제
+- #### 문제발생 이유와 해결방안
+  - #### 문제발생 이유
+    > self.tr은 context를 자동으로 삽입하게 되는데 이는 클래스의 이름이다.   
+    그래서 상속을 해 사용하면 자식클래스의 context로 지정되기 때문에 번역 데이터를 찾을 수 없기 때문이다.   
+    <b>아래의 hello를 안녕으로 번역한다고 하였을때 예시이다</b>
+    ```
+    class A(QObject):
+       def hello(self):
+          print(self.tr('hello')
+
+    class B(A):
+       pass
+
+    a = A()
+    a.hello()
+    b = B()
+    b.hello()
+
+    =================결과
+    안녕
+    hello
+    ```
+    이 경우에 B클래스에서는 번역이 안되는것을 알 수 있다.
+  - #### 해결방법
+    그래서 현재 Qt5 상황에서는 QCoreApplication.translate사용하여 context를 하드코딩 해주어야한다.
+    ```
+    class A(QObject):
+       def hello(self):
+           translate = QCoreApplication.translate
+           print(translate('A','hello'))
+
+    class B(A):
+       pass
+    
+    a = A()
+    a.hello()
+    b = B()
+    b.hello()
+
+    =================결과
+    안녕
+    안녕
+    ```
