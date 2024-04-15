@@ -7,7 +7,9 @@ import threading
 from PyQt5.QtWidgets import QStyle, QStyleOption, QWidget
 from customWidget.custom_progress_bar import CustomProgressBar
 from customWidget.thumbnail_label import ThumbnailLabel
+from customWidget.edit_task_popup import EditTaskPopup
 import os
+import shutil
 import paths
 import webbrowser
 import type
@@ -63,9 +65,36 @@ class Download_Panel(QWidget):
         remove_action.triggered.connect(self.__delete_list)
         self.my_menu.addActions([open_action, del_action, remove_action])
         self.my_menu.addSeparator()
+        edit_task_action = QAction(QIcon(MyIcon.EDIT_ICON), self.tr('Edit task...'), self)
+        edit_task_action.triggered.connect(self.__open_edit_task)
+        self.my_menu.addAction(edit_task_action)
 
     def customContextMenuSlot(self, pos):
         self.my_menu.popup(QtGui.QCursor.pos())
+
+    def __open_edit_task(self):
+        edit_task = EditTaskPopup(self)
+        if self.info.file_path is None:
+            file =''
+        else:
+            file = os.path.basename(self.info.file_path)
+
+        edit_task.set_data(self.info.name, file, self.info.dir)
+        edit_task.exec_()
+
+        if edit_task.res == edit_task.RES_OK:
+            self.title.setText(edit_task.title_edit.text())
+            file_name = edit_task.file_edit.text()
+            new_file_path = os.path.join(self.info.dir, file_name)
+            os.rename(self.info.file_path, new_file_path)
+            new_dir = edit_task.forder_edit.text()
+            final_file_path = os.path.join(new_dir, file_name)
+            shutil.move(new_file_path, final_file_path)
+            self.info.dir = new_dir
+            self.info.file_path = final_file_path
+            self.info.name = edit_task.title_edit.text()
+        
+        edit_task.deleteLater()
 
     def _init_panel_widget(self):
         #=========================================
@@ -194,6 +223,7 @@ class Download_Panel(QWidget):
                 
             txt = prefix + ' \n' + postfix
             self.title.setText(txt)
+            self.info.name = txt
             self.thumbnail.setLoading(False)
             self.thumbnail.state = type.State.Error
         else:

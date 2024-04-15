@@ -21,3 +21,4 @@ class MyIcon():
     MENU_ARROW_ICON = a('/down_arrow.png')
     TIME_ICON = a('/time_icon.png')
     DISK_ICON = a('/disk_icon.png')
+    EDIT_ICON =a('/edit_icon.png')
