@@ -28,22 +28,24 @@ class MainWindow(QMainWindow):
         self.resize(self.WIN_W, self.WIN_H)
         self.setMinimumSize(450, 400)
         self.MoveWinCenter()
-        self.setWindowTitle("CB")
+        self.setWindowTitle("MacGyver_CB")
         self.setWindowIcon(QIcon(MyIcon.WIN_ICON))
 
         self.exitAction = QAction(QIcon(MyIcon.EXIT_ICON), 'Exit', self)
         self.exitAction.setShortcut('Alt+F4')
-        self.exitAction.triggered.connect(qApp.quit)
+        self.exitAction.triggered.connect(app.closeAllWindows)
         self.setFocusPolicy(Qt.FocusPolicy.NoFocus)
         menubar = self.menuBar()
         menubar.setNativeMenuBar(False)
         self.tasks = menubar.addMenu('Tasks')
         self.tasks.addAction(self.exitAction)
+        self.tray_opt_action = QAction(self.tr('Minimize to tray on close'), self)
+        self.tray_opt_action.setCheckable(True)
 
+        option_menu = menubar.addMenu(self.tr('Option'))
+        option_menu.addAction(self.tray_opt_action)
         mainGrid = QGridLayout()
-
         downloadGrid = QGridLayout()
-        
         self.edit = CustomIconEdit(self)
         bt = DownloadButton(self.edit, self)
         downloadGrid.addWidget(self.edit, 0, 0)
@@ -110,8 +112,16 @@ class MainWindow(QMainWindow):
         self.setCentralWidget(widget)
         self.sig.connect(self.start_download)
         self.show()
+
+        self.tray = QSystemTrayIcon(QIcon(MyIcon.WIN_ICON), self)
+        self.tray.show()
+        self.tray.activated.connect(self.__tray_activated)
+        tray_menu = QMenu()
+        self.tray_exitAction = QAction(QIcon(MyIcon.EXIT_ICON), self.tr('Exit'), self)
+        self.tray_exitAction.triggered.connect(self.tray_close)
+        tray_menu.addAction(self.tray_exitAction)
         self.retranslateUi()
-        
+        self.tray.setContextMenu(tray_menu)
         save_load.load(self.listView)
 
     def MoveWinCenter(self):
@@ -143,7 +153,20 @@ class MainWindow(QMainWindow):
         down.start()
 
     def closeEvent(self, a0: QCloseEvent | None) -> None:
+        if self.isHidden() is False:
+            if self.tray_opt_action.isChecked():
+                a0.ignore()
+                self.hide()
+                return
         save_load.save(self.listView)
+    
+    def tray_close(self):
+        save_load.save(self.listView)
+        QApplication.quit()
+    
+    def __tray_activated(self, reason):
+        if reason == QSystemTrayIcon.ActivationReason.DoubleClick:
+            self.show()
 
 import ctypes
 import os
