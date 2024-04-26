@@ -1,14 +1,16 @@
 
 import urllib
 import urllib.request
-
+from fake_useragent import UserAgent
 
 def get_headers(customized_http_header):
     request_header = dict()
+    ua = UserAgent()
+    # request_header[
+    #     'User-Agent'] = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36 OPR/108.0.0.0'
 
     request_header[
-        'User-Agent'] = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.77 Safari/537.36'
-
+        'User-Agent'] = ua.random
     if customized_http_header is not None:
         request_header.update(customized_http_header)
 
