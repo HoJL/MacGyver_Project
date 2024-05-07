@@ -105,11 +105,10 @@ class Download_M3u8(Downloader):
 
     def download(self) -> DownloadInfo:
         super().download()
-        
         file = 'm3u8_'
         now = datetime.datetime.now()
         date_str = now.strftime('%Y%m%d_%H%M%S')
-        tmpdir = paths.BASE_DIR + '/tmp_' + date_str
+        self.tmpdir = paths.BASE_DIR + '/tmp_' + date_str
         file += date_str + '.mp4'
         self.dp.setTitle(file)
         self.info.name = file
@@ -133,34 +132,37 @@ class Download_M3u8(Downloader):
         #self.dp.progress.start()
 
         work_start_time = time.time()
-        with ThreadPoolExecutor(max_workers=100) as executor:
+        with ThreadPoolExecutor(max_workers=50) as executor:
             future_to_key_url = {executor.submit(self._download_segment, segment_url): (key, segment_url) for key, segment_url in key_segment_pairs}
-
             response_code, response_content = None, None
             for future in concurrent.futures.as_completed(future_to_key_url):
                 key, segment_url = future_to_key_url[future]
                 try:
                     response_code, response_content = future.result()
                 except (concurrent.futures.CancelledError, concurrent.futures.TimeoutError) as e:
-                    self.info.state = State.Error
-                    self.info.error_code = e.__str__()
-                    return self.info
+                    executor.shutdown(wait=False, cancel_futures=True)
+                    return self.m3u8_error(e.__str__())
+                    # self.info.state = State.Error
+                    # self.info.error_code = e.__str__()
+                    # return self.info
 
                 if response_code == 200:
                     key_url_content_triple.append((key, segment_url, response_content))
                     #progress update
                     self.dp.progress.update_progress()
                 else:
-                    self.info.state = State.Error
-                    self.info.error_code = 'Response error: ' + response_code.__str__()
-                    return self.info
+                    executor.shutdown(wait=False, cancel_futures=True)
+                    # self.info.state = State.Error
+                    # self.info.error_code = 'Response error: ' + response_code.__str__()
+                    # return self.info
+                    return self.m3u8_error('Response error: ' + response_code.__str__())
 
             self.dp.progress.IsPostprocessing(True)
-            if os.path.isdir(tmpdir) is False:
-                os.mkdir(tmpdir)
+            if os.path.isdir(self.tmpdir) is False:
+                os.mkdir(self.tmpdir)
             for key, url, content in key_url_content_triple:
                 file_name = self._resolve_file_name(url)
-                file_path = os.path.join(tmpdir, file_name)
+                file_path = os.path.join(self.tmpdir, file_name)
                 if key is not None:
                     crypt_ls = {"AES-128": AES}
                     crypt_obj = crypt_ls[key.method]
@@ -172,16 +174,16 @@ class Download_M3u8(Downloader):
                     fin.write(content)
 
         self.dp.progress.download_done()
-        order_segment_list_file_path = os.path.join(tmpdir, "ts_ls.txt")
+        order_segment_list_file_path = os.path.join(self.tmpdir, "ts_ls.txt")
         cnt = 0
         with open(order_segment_list_file_path, 'w', encoding='utf8') as fin:
             for key, urll in key_segment_pairs:
                 file_name = self._resolve_file_name(urll)
-                segment_file_path = os.path.join(tmpdir, file_name)
+                segment_file_path = os.path.join(self.tmpdir, file_name)
                 fin.write("file '{}'\n".format(segment_file_path))
                 if cnt == 0:
                     cnt += 1
-                    thumbnail_path = os.path.join(tmpdir, 'tb.png')
+                    thumbnail_path = os.path.join(self.tmpdir, 'tb.png')
                     thumb_cmd = "ffmpeg -y -nostats -loglevel error -ss 0 -i " + segment_file_path + " -vcodec png -vframes 1 " + thumbnail_path
                     tumb_p = subprocess.Popen(thumb_cmd, shell=True, stdout=subprocess.PIPE,
                                             stderr=subprocess.PIPE)
@@ -192,6 +194,20 @@ class Download_M3u8(Downloader):
         p = subprocess.Popen(merge_cmd, shell=True, stdout=subprocess.PIPE,
                                 stderr=subprocess.PIPE)
         p.communicate()
-        shutil.rmtree(tmpdir)
+        try:
+            shutil.rmtree(self.tmpdir)
+        except:
+            pass
         self._download_done(file_dir, forder_dir)
         return Video(self.info)
+
+
+    def m3u8_error(self, error_code):
+        try:
+            shutil.rmtree(self.tmpdir)
+        except:
+            pass
+        self.info.state = State.Error
+        self.info.error_code = error_code
+        return self.info
+
